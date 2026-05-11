@@ -1,0 +1,25 @@
+# --- Dataset (too large for git) ---
+# Unpacked maildir (~2.6 GB)
+enron_mail/
+# Tarball (~423 MB) — distributed via GitHub Release asset instead
+enron_mail_20150507.tar.gz
+
+# --- Course materials excluded from public repo ---
+intro_presentation/
+
+# --- Merged into README.md ---
+GENERAL_INFO.md
+
+# --- Python / Jupyter ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# --- OS / editor junk ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
