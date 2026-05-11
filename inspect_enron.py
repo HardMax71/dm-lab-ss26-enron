@@ -13,7 +13,7 @@ from email import policy
 from email.parser import BytesHeaderParser, BytesParser
 from pathlib import Path
 
-ROOT = Path("/home/user/Desktop/possible_datasets/enron_mail")
+ROOT = Path(__file__).resolve().parent / "enron_mail"
 
 LOGISTICS_HINTS = ("schedul", "logistic", "transport", "pipeline", "dispatch",
                    "deliver", "nomination", "gas_daily", "capacity")
