@@ -26,6 +26,17 @@ tables under `eda/cache/` and writes plots to `eda/plots/`. The script
 message counts, threading-header coverage, declared charsets, the largest
 folders, and frequent sender domains.
 
+`eda-2/enron_eda_report.ipynb` is the written first-week report. It reads top to
+bottom, pairing each plot with what it shows, and covers the variables, the main
+distributions, and a closer look at deleted mail. It reuses the cached tables in
+`eda/cache/`, so it runs without the 2.6 GB maildir and writes its figures to
+`eda-2/plots/`:
+
+```
+uv run --with jupyter --with pandas --with pyarrow --with matplotlib \
+  --with seaborn jupyter lab eda-2/enron_eda_report.ipynb
+```
+
 ## Schedule
 
 Intended SS26 schedule. Past sessions are ticked.
@@ -36,6 +47,6 @@ Intended SS26 schedule. Past sessions are ticked.
 | [x]  | Apr 22  | No class                                       | [ ]  | Jun 10  | Descriptive Mining 6 ? |
 | [x]  | Apr 29  | Data Set Presentation                          | [ ]  | Jun 17  | Predictive Mining 1    |
 | [x]  | May 6   | Data Set Selection / Group Formation / EDA 1   | [ ]  | Jun 24  | Predictive Mining 2    |
-| [ ]  | May 13  | Descriptive Mining 2                           | [ ]  | Jul 1   | Predictive Mining 3    |
+| [x]  | May 13  | Descriptive Mining 2                           | [ ]  | Jul 1   | Predictive Mining 3    |
 | [ ]  | May 20  | Descriptive Mining 3                           | [ ]  | Jul 8   | Final Presentation 1   |
 | [ ]  | May 27  | Descriptive Mining 4                           | [ ]  | Jul 15  | Final Presentation 2   |
