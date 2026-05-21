@@ -37,6 +37,23 @@ uv run --with jupyter --with pandas --with pyarrow --with matplotlib \
   --with seaborn jupyter lab eda-2/enron_eda_report.ipynb
 ```
 
+`eda-3/enron_eda_deeper.ipynb` extends the first-week report along the lines
+flagged in the week-2 review: year-by-year activity rhythm, a readable
+sender-domain plot, the round-trip and social-graph structure (with a
+BCC-is-a-copy-of-CC data caveat), a content drill on the `california` and
+`ees` threads, per-mailbox deletion statistics, and a per-mailbox feature
+correlation. Figures land in `eda-3/plots/`:
+
+```
+uv run --with jupyter --with pandas --with pyarrow --with matplotlib \
+  --with seaborn --with networkx jupyter lab eda-3/enron_eda_deeper.ipynb
+```
+
+`WHOS_WHO.md` is a short reference for the people who keep appearing in the
+notebooks: company shape, divisions, executive hierarchy, profiles for the
+named mailbox owners, and a collapse timeline. Worth a read before the
+network and content sections of `eda-3/`.
+
 ## Schedule
 
 Intended SS26 schedule. Past sessions are ticked.
@@ -48,5 +65,5 @@ Intended SS26 schedule. Past sessions are ticked.
 | [x]  | Apr 29  | Data Set Presentation                          | [ ]  | Jun 17  | Predictive Mining 1    |
 | [x]  | May 6   | Data Set Selection / Group Formation / EDA 1   | [ ]  | Jun 24  | Predictive Mining 2    |
 | [x]  | May 13  | Descriptive Mining 2                           | [ ]  | Jul 1   | Predictive Mining 3    |
-| [ ]  | May 20  | Descriptive Mining 3                           | [ ]  | Jul 8   | Final Presentation 1   |
+| [x]  | May 20  | Descriptive Mining 3                           | [ ]  | Jul 8   | Final Presentation 1   |
 | [ ]  | May 27  | Descriptive Mining 4                           | [ ]  | Jul 15  | Final Presentation 2   |
