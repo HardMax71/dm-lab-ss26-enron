@@ -1,0 +1,188 @@
+\documentclass[aspectratio=169,14pt]{beamer}
+\usetheme{metropolis}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\graphicspath{{figures/}}
+
+% Slide number (current / total) in the footer
+\setbeamertemplate{frame numbering}[fraction]
+
+\newcommand{\plotframe}[3]{%
+  \begin{frame}{#1}
+    \begin{center}
+      \includegraphics[height=0.58\textheight,keepaspectratio]{#2}
+    \end{center}
+    \vspace{-0.4em}\small #3
+  \end{frame}}
+
+\title{Enron Email Corpus -- Week 2}
+\subtitle{Variables, distributions, and what they show}
+\author{Data Mining Lab SoSe 26 -- Task 2}
+\institute{TUM, Department of Computer Science}
+\date{May 20, 2026}
+
+\begin{document}
+
+\maketitle
+
+% ---------------------------------------------------------------
+\begin{frame}{What Enron was}
+  Enron was a large US energy and commodities trading company based in
+  Houston. After a decade of rapid growth it collapsed in late 2001 in
+  an accounting-fraud scandal, then among the largest US bankruptcies.
+
+  \medskip
+  The mailboxes survived because the Federal Energy Regulatory
+  Commission placed them in the public record during the investigation.
+  Carnegie Mellon hosts the cleaned version we use.
+
+  \medskip
+  Dataset:
+  \href{https://www.cs.cmu.edu/~enron/}{\texttt{cs.cmu.edu/\textasciitilde enron/}}
+  \hfill\small\texttt{enron\_mail\_20150507.tar.gz}
+\end{frame}
+
+% ---------------------------------------------------------------
+\begin{frame}{What we have}
+  \begin{itemize}
+    \item About \textbf{517{,}000} email files
+    \item From \textbf{150} mailbox owners
+    \item Covering \textbf{1997 to 2002} (Enron's active years)
+    \item Unpacked: roughly \textbf{2.6\,GB} of plain text
+  \end{itemize}
+
+  \medskip
+  \small
+  A few hundred files carry broken dates and a handful of folders mix
+  sent and received mail, so later plots are drawn after a light
+  cleaning pass.
+\end{frame}
+
+% ---------------------------------------------------------------
+\begin{frame}[fragile]{One file, one email}
+  Every message is a plain-text file in the RFC-822 format. A block of
+  headers is followed by the body.
+
+  \medskip
+  \scriptsize
+  \begin{verbatim}
+Message-ID: <1326004.1075846655910.JavaMail.evans@thyme>
+Date:       Wed, 18 Apr 2001 04:08:00 -0700 (PDT)
+From:       mary.cook@enron.com
+To:         angela.davis@enron.com, ... , tana.jones@enron.com
+Subject:    Guaranty Distribution
+X-From:     Mary Cook
+X-Origin:   BAILEY-S
+X-Folder:   \Susan_Bailey_June2001\Notes Folders\All documents
+
+As a reminder, paralegals should distribute guaranties as stated ...
+  \end{verbatim}
+\end{frame}
+
+% ---------------------------------------------------------------
+\begin{frame}{Variables}
+  The fields below are kept from each message. \texttt{X-*} fields are
+  Outlook-specific and tell us which mailbox the file came from.
+
+  \medskip
+  \small
+  \begin{tabular}{lll}
+    \toprule
+    Field        & Example value                & Data type \\
+    \midrule
+    Message-ID   & \texttt{<1326004...@thyme>}  & Nominal (unique string) \\
+    Date         & 18 Apr 2001 04:08 PDT        & Datetime \\
+    From         & \texttt{mary.cook@enron.com} & Nominal (categorical) \\
+    To           & list of addresses            & Nominal (list) \\
+    Subject      & Guaranty Distribution        & Text \\
+    X-From       & Mary Cook                    & Text (display name) \\
+    X-Origin     & BAILEY-S                     & Mailbox identifier \\
+    Message body & free text                    & Text (freeform) \\
+    \bottomrule
+  \end{tabular}
+\end{frame}
+
+% ---------------------------------------------------------------
+\plotframe{Mail volume over time}{p1_monthly_volume.png}{%
+  Traffic climbs through 2000 and peaks at \textbf{37{,}139} messages
+  in October 2001, the same month the fraud became public.}
+
+% ---------------------------------------------------------------
+\plotframe{Folder structure}{p2_folder_treemap.png}{%
+  Folders fall into six broad groups. \texttt{all\_documents},
+  \texttt{sent}, \texttt{inbox} and \texttt{deleted\_items} dominate.}
+
+% ---------------------------------------------------------------
+\plotframe{Largest mailboxes and folders}{p3_mailboxes_folders.png}{%
+  \texttt{kaminski-v} is the largest single mailbox
+  (\textbf{28{,}465} files). The ten biggest mailboxes hold
+  \textbf{37.7\%} of the corpus.}
+
+% ---------------------------------------------------------------
+\plotframe{Activity by weekday and hour}{p4_weekday_hour.png}{%
+  Weekend traffic is rare (\textbf{3.8\%}). Weekday activity peaks in
+  the afternoon UTC, with a visible lunch dip and a lighter Friday.}
+
+% ---------------------------------------------------------------
+\plotframe{Sender domains}{p5_sender_sunburst.png}{%
+  About \textbf{83\%} of mail comes from an \texttt{enron.com} address.
+  External domains together make up only a thin slice.}
+
+% ---------------------------------------------------------------
+\plotframe{Recipient edges by direction}{p6_edges_by_direction.png}{%
+  Each message expands into edges (one per
+  \texttt{To}/\texttt{Cc}/\texttt{Bcc}). Internal-to-internal traffic
+  is the large majority.}
+
+% ---------------------------------------------------------------
+\plotframe{Edge volume over time}{p7_monthly_edges.png}{%
+  The internal-vs-external mix stays roughly stable across the
+  company's history, even as overall volume rises and falls.}
+
+% ---------------------------------------------------------------
+\plotframe{What people wrote about}{p8_body_wordcloud.png}{%
+  Common English words sit on top of a clearly Enron-flavoured layer:
+  \texttt{energy}, \texttt{gas}, \texttt{power}, \texttt{california},
+  \texttt{ees}.}
+
+% ---------------------------------------------------------------
+\plotframe{What employees threw away}{p9_deleted_over_time.png}{%
+  Deletions are flat for years, then spike: \textbf{$\sim$15{,}000} in
+  October 2001 and over \textbf{40\%} of Feb / Jun 2002 mail trashed.
+  Window matches the public collapse.}
+
+% ---------------------------------------------------------------
+\begin{frame}{Open challenges}
+  \small
+  \begin{itemize}
+    \item \textbf{91.9\%} of subjects are shared across multiple
+          emails, weakening subject-based threading
+    \item Body text needs cleaning before any NLP (forwarded blocks,
+          attachment placeholders, quoted replies)
+    \item Many files are duplicated across sender and recipient
+          mailboxes, plus extra copies from forwarding
+    \item Engineered header features are mostly uncorrelated so far
+    \item Surfacing notable individual messages is still manual
+  \end{itemize}
+\end{frame}
+
+% ---------------------------------------------------------------
+\begin{frame}{Where we stand}
+  The corpus is large, real, and unevenly distributed. Volume, folder
+  shape, sender domains, activity rhythm, and vocabulary all line up
+  with what we would expect from a real US energy trader.
+
+  \medskip
+  The clearest single finding is the deletion spike in late 2001 to
+  mid-2002, which sits exactly on top of Enron's public collapse.
+  Thread reconstruction is the largest open problem and the focus for
+  next week.
+
+  \medskip
+  \begin{center}\large Questions?\end{center}
+\end{frame}
+
+\end{document}

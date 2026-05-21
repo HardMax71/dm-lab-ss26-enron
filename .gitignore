@@ -23,3 +23,15 @@ venv/
 Thumbs.db
 .vscode/
 .idea/
+
+# --- LaTeX build artefacts (rebuild with pdflatex) ---
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.synctex.gz
+*.fdb_latexmk
+*.fls
