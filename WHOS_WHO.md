@@ -143,7 +143,7 @@ SEC filings and the Wikipedia entries listed at the bottom of this page.
 ## Named-mailbox profiles
 
 These are the people whose addresses, mailboxes, or words appear in the
-plots in `eda/`, `eda-2/`, and especially `eda-3/`. Alphabetical by
+plots in `eda-2/`, `eda-3/`, and especially `eda-4/`. Alphabetical by
 last name. Mailbox handle in backticks where their mailbox is one of
 the 150 in the corpus.
 
