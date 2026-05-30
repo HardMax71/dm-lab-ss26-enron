@@ -74,68 +74,68 @@ SEC filings and the Wikipedia entries listed at the bottom of this page.
 
 **Office of the Chairman**
 
-- **Kenneth Lay** (`lay-k` in the corpus) — Founder, Chairman and CEO
+- **Kenneth Lay** (`lay-k` in the corpus), Founder, Chairman and CEO
   from 1985. Stepped down as CEO in February 2001 to make way for
   Skilling, then resumed the CEO role in August 2001 after Skilling
   resigned. Tried unsuccessfully to keep the company solvent through
   the bankruptcy. Convicted on six counts in 2006 and died of a heart
   attack before sentencing.
-- **Jeffrey Skilling** (`skilling-j`) — President and COO from 1997,
+- **Jeffrey Skilling** (`skilling-j`), President and COO from 1997,
   CEO February-August 2001. Resigned abruptly on August 14, 2001
   citing personal reasons. Convicted on 19 of 28 counts in 2006 and
   served the bulk of a 24-year sentence.
-- **Greg Whalley** (`whalley-g`, `whalley-l`) — President and COO from
+- **Greg Whalley** (`whalley-g`, `whalley-l`), President and COO from
   August 2001 to bankruptcy. Came up through Wholesale Services.
   Joined UBS Warburg's post-Enron trading desk in early 2002.
 
 **Finance and accounting**
 
-- **Andrew Fastow** — Chief Financial Officer from 1998 to October
+- **Andrew Fastow**, Chief Financial Officer from 1998 to October
   2001. Architect of the off-balance-sheet partnerships (LJM1, LJM2,
   Raptor) that hid Enron's debt. Pled guilty in 2004, served six
   years. His mailbox is not in the corpus.
-- **Jeff McMahon** — Treasurer until 2000, then briefly president of
+- **Jeff McMahon**, Treasurer until 2000, then briefly president of
   Enron Industrial Markets, then CFO from October 2001 to bankruptcy.
-- **Richard Causey** — Chief Accounting Officer. Pled guilty in
+- **Richard Causey**, Chief Accounting Officer. Pled guilty in
   December 2005, sentenced to seven years.
-- **Rick Buy** (`buy-r`) — Chief Risk Officer.
-- **Ben Glisan** — Treasurer after McMahon moved up. Pled guilty in
+- **Rick Buy** (`buy-r`), Chief Risk Officer.
+- **Ben Glisan**, Treasurer after McMahon moved up. Pled guilty in
   2003, sentenced to five years.
 
 **Legal**
 
-- **James Derrick** (`derrick-j`) — General Counsel of Enron Corp.
-- **Mark Haedicke** (`haedicke-m`) — General Counsel of Enron
+- **James Derrick** (`derrick-j`), General Counsel of Enron Corp.
+- **Mark Haedicke** (`haedicke-m`), General Counsel of Enron
   Wholesale Services, head of the ENA legal department that the
   Shackleton / Taylor / Jones / Mann cluster reports into.
 
 **Division CEOs and senior leaders**
 
-- **John Lavorato** (`lavorato-j`) — President and CEO of Enron
+- **John Lavorato** (`lavorato-j`), President and CEO of Enron
   Americas (the North/South American part of Wholesale Services).
   Received the largest post-bankruptcy retention bonus ($5M).
-- **Louise Kitchen** (`kitchen-l`) — President of Enron Online and
+- **Louise Kitchen** (`kitchen-l`), President of Enron Online and
   later COO of Enron Americas; widely credited as the driving force
   behind EnronOnline's 1999-2000 launch. $2M retention bonus.
-- **Cliff Baxter** — CEO of Enron North America and briefly Vice
+- **Cliff Baxter**, CEO of Enron North America and briefly Vice
   Chairman of Enron Corp. Resigned in May 2001. Killed himself on
   January 25, 2002 during the post-bankruptcy investigations.
-- **Lou Pai** — Founding CEO of Enron Energy Services.
-- **Ken Rice** — CEO of Enron Broadband Services (and earlier of
+- **Lou Pai**, Founding CEO of Enron Energy Services.
+- **Ken Rice**, CEO of Enron Broadband Services (and earlier of
   Enron Wholesale Services). Cooperated with prosecutors and was
   sentenced to 27 months.
-- **Rebecca Mark-Jusbasche** — CEO of Enron International and
+- **Rebecca Mark-Jusbasche**, CEO of Enron International and
   Azurix until 2000.
-- **Mark Frevert** (`frevert-m`) — Chairman of Enron Wholesale
+- **Mark Frevert** (`frevert-m`), Chairman of Enron Wholesale
   Services after Whalley moved up.
 
 **Whistleblowers and dissenters**
 
-- **Sherron Watkins** — Vice President of Corporate Development. Sent
+- **Sherron Watkins**, Vice President of Corporate Development. Sent
   the anonymous warning memo to Lay on August 15, 2001 and a longer
   signed memo a week later. Named Time Person of the Year (jointly)
   for 2002. Her mailbox is not in the corpus.
-- **Vince Kaminski** (see below) — repeatedly objected to Fastow's
+- **Vince Kaminski** (see below), repeatedly objected to Fastow's
   partnership structures inside the company and was marginalised for
   it.
 
@@ -147,12 +147,12 @@ plots in `eda-2/`, `eda-3/`, and especially `eda-4/`. Alphabetical by
 last name. Mailbox handle in backticks where their mailbox is one of
 the 150 in the corpus.
 
-**Chris Germany** (`germany-c`) — Trader on the East gas desk in
+**Chris Germany** (`germany-c`), Trader on the East gas desk in
 Houston. One of the most active senders in the corpus throughout
 2000-2002 and a recurring top sender in the year-by-year activity
 heatmaps.
 
-**Jeff Dasovich** (`dasovich-j`) — Government relations executive
+**Jeff Dasovich** (`dasovich-j`), Government relations executive
 based in California. Liaised between Enron and FERC, the California
 Public Utilities Commission, and the state legislature during the
 2000-2001 California electricity crisis. The single largest hub in
@@ -160,16 +160,16 @@ the eda-3 directed-edges network plot: 106,853 outbound messages on
 the top-250 internal pairs alone, all going to a fixed ring of about
 a dozen regulatory and PR colleagues.
 
-**Mary Hain** (`hain-m`) — Lawyer in the Wholesale Services legal
+**Mary Hain** (`hain-m`), Lawyer in the Wholesale Services legal
 department, regulatory side. Appears as a hub in the legal cluster
 of the eda-3 graph.
 
-**Tana Jones** (`jones-t`) — Senior legal specialist in the Enron
+**Tana Jones** (`jones-t`), Senior legal specialist in the Enron
 North America legal department. One of the three pivots (with
 Shackleton and Taylor) of the legal cluster in the eda-3 graph.
 Among the busiest senders in 1999.
 
-**Vince Kaminski** (`kaminski-v`) — Head of Enron's quantitative
+**Vince Kaminski** (`kaminski-v`), Head of Enron's quantitative
 modelling and research group from 1992 to 2002, with roughly fifty
 analysts reporting in. Pioneered the risk-management methods Enron
 used for its trading book, raised early and repeated objections to
@@ -179,61 +179,61 @@ largest in the corpus at 28,465 files (the volume reflects both his
 role as a senior reviewer and his habit of receiving everyone's
 analytical work).
 
-**Paul Kaufman** (`kaufman-p`) — Government relations, paired with
+**Paul Kaufman** (`kaufman-p`), Government relations, paired with
 Dasovich on the regulatory ring.
 
-**Stephen Kean** (`kean-s`, also `skean@enron.com`) — Executive
+**Stephen Kean** (`kean-s`, also `skean@enron.com`), Executive
 Vice President and Chief of Staff under Lay. Sits in the
 receive-heavy outlier list because he appears as a recipient in
 many people's mail but his own outbox uses a different address
 form (truncated to `skean@enron.com` in many headers).
 
 **Harry Kingerski** (`kingerski-h` is absent, but the address
-appears as recipient) — Regulatory affairs.
+appears as recipient), Regulatory affairs.
 
-**Louise Kitchen** (`kitchen-l`) — Trader who built EnronOnline,
+**Louise Kitchen** (`kitchen-l`), Trader who built EnronOnline,
 later COO of Enron Americas. The "you have 48 hours" subject in
 the 2002 hot cells is signed by her, part of the wind-down
 communications.
 
-**Kenneth Lay** (`lay-k`) — see executive section above. His
+**Kenneth Lay** (`lay-k`), see executive section above. His
 mailbox in 2002 is heavily skewed by inbound protest mail; the
 2002 Wed 17 UTC heatmap spike in eda-3 is 770 copies of the
 "demand ken lay donate proceeds from enron stock sales" template
 landing in his inbox over a single hour and being moved to
 `deleted_items` by his assistants.
 
-**Matthew Lenhart** (`lenhart-m`) — Trader.
+**Matthew Lenhart** (`lenhart-m`), Trader.
 
-**Kay Mann** (`mann-k`) — Senior lawyer in the contracts group.
+**Kay Mann** (`mann-k`), Senior lawyer in the contracts group.
 The largest hub on the right-hand side of the eda-3 peer-to-peer
 graph (her cluster is contracts and counterparty agreements).
 
 **Susan Mara** (`mara-s` not in the 150, address appears as
-recipient) — Government relations, California regulatory side.
+recipient), Government relations, California regulatory side.
 Tightly tied to Dasovich.
 
-**Christopher Nicolay** (`nicolay-c` not in corpus as owner) —
+**Christopher Nicolay** (`nicolay-c` not in corpus as owner), 
 Counsel in the Wholesale Services legal department.
 
-**Sarah Novosel** — Regulatory affairs lawyer in the Dasovich
+**Sarah Novosel**, Regulatory affairs lawyer in the Dasovich
 cluster.
 
-**Sara Shackleton** (`shackleton-s`) — Senior counsel in the Enron
+**Sara Shackleton** (`shackleton-s`), Senior counsel in the Enron
 North America legal department. Drafted derivatives contracts and
 ISDA master agreements. One of the busiest senders across the
 entire corpus and an anchor of the legal cluster in the eda-3
 graph.
 
-**Richard Shapiro** (`shapiro-r`) — Senior Vice President for
+**Richard Shapiro** (`shapiro-r`), Senior Vice President for
 regulatory affairs and government relations. Dasovich's boss in
 the org chart.
 
-**James Steffes** (`steffes-j`) — Vice President for government
+**James Steffes** (`steffes-j`), Vice President for government
 affairs, the third leg of the Dasovich-Shapiro-Steffes regulatory
 cluster.
 
-**Kate Symes** (`symes-k`) — Real-time power-trading associate in
+**Kate Symes** (`symes-k`), Real-time power-trading associate in
 the Portland (Oregon) office, which was Enron's West-coast power
 desk for tax reasons even though the traders reported into
 Wholesale Services. Hired in April 2001; among the lower-tenure
@@ -241,7 +241,7 @@ named mailboxes. Anchors the small but tight West-power triangle
 (Symes / Kerri Thompson / Evelyn Metoyer) in the eda-3 round-trip
 plot.
 
-**Mark Taylor** (`taylor-m`) — Lawyer in the Enron North America
+**Mark Taylor** (`taylor-m`), Lawyer in the Enron North America
 legal department, derivatives and structured products specialist.
 Pairs with Shackleton and Jones on the legal hub.
 
@@ -252,19 +252,19 @@ The plots also surface a number of role accounts that are not
 individual people. They show up as send-heavy or receive-heavy
 outliers in eda-3 C.3.b.
 
-- `enron.announcements@enron.com`, `announcements.enron@enron.com` —
+- `enron.announcements@enron.com`, `announcements.enron@enron.com`:
   Company-wide announcement mailers.
-- `outlook.team.cc@enron.com` (often abbreviated) — Distribution-list
+- `outlook.team.cc@enron.com` (often abbreviated): Distribution-list
   manager for the Outlook team.
-- `technology.enron@enron.com` — IT update bot.
+- `technology.enron@enron.com`: IT update bot.
 - `omaha.helpdesk@enron.com`, `exchange.administrator@enron.com`,
-  `mbx_iscinfra@enron.com` — Infrastructure and helpdesk accounts.
-- `no.address@enron.com` — Catch-all used by the parser for messages
+  `mbx_iscinfra@enron.com`: Infrastructure and helpdesk accounts.
+- `no.address@enron.com`: Catch-all used by the parser for messages
   with malformed `From:` fields.
-- `bob.ambrocik@enron.com` — Reports automation account; 18k+
+- `bob.ambrocik@enron.com`: Reports automation account; 18k+
   outbound and only five inbound on the internal-edge set.
 - `all.worldwide@enron.com`, `all.houston@enron.com`,
-  `recipients@enron.com` — Distribution-list inboxes; no actual
+  `recipients@enron.com`: Distribution-list inboxes; no actual
   person sends from these.
 
 
@@ -286,34 +286,34 @@ addresses in those 150 mailboxes' content.
 Reference dates for the scandal-period axvspan used in eda-3 B2 and
 D1. Compiled from the Wikipedia "Enron scandal" article.
 
-- **August 14, 2001** — Skilling resigns as CEO after six months,
+- **August 14, 2001**, Skilling resigns as CEO after six months,
   citing personal reasons. Lay resumes the role. Stock at $42.
-- **August 15-22, 2001** — Sherron Watkins sends Lay an anonymous
+- **August 15-22, 2001**, Sherron Watkins sends Lay an anonymous
   warning memo, then a signed six-page memo detailing the
   accounting issues.
-- **October 16, 2001** — Enron announces a $618M Q3 loss and a $1.2B
+- **October 16, 2001**, Enron announces a $618M Q3 loss and a $1.2B
   reduction in shareholder equity. SEC opens an informal inquiry.
-- **October 22, 2001** — SEC inquiry made public; stock falls ~20%.
-- **October 25, 2001** — Fastow removed as CFO; McMahon takes over.
-- **November 8, 2001** — Enron restates five years of financials,
+- **October 22, 2001**, SEC inquiry made public; stock falls ~20%.
+- **October 25, 2001**, Fastow removed as CFO; McMahon takes over.
+- **November 8, 2001**, Enron restates five years of financials,
   reducing reported income by $586M.
-- **November 9, 2001** — Dynegy agrees to acquire Enron for ~$8B.
-- **November 28, 2001** — Rating agencies cut Enron to junk; Dynegy
+- **November 9, 2001**, Dynegy agrees to acquire Enron for ~$8B.
+- **November 28, 2001**, Rating agencies cut Enron to junk; Dynegy
   walks away.
-- **November 30, 2001** — Enron Europe files for bankruptcy.
-- **December 2, 2001** — Enron Corp. files for Chapter 11; at the
+- **November 30, 2001**, Enron Europe files for bankruptcy.
+- **December 2, 2001**, Enron Corp. files for Chapter 11; at the
   time the largest bankruptcy in US history.
-- **January 9, 2002** — Department of Justice opens criminal
+- **January 9, 2002**, Department of Justice opens criminal
   investigation.
-- **January 25, 2002** — Cliff Baxter, former Vice Chairman, dies by
+- **January 25, 2002**, Cliff Baxter, former Vice Chairman, dies by
   suicide.
-- **February 7, 2002** — Skilling testifies before Congress.
-- **February 14, 2002** — Lay invokes the Fifth Amendment.
-- **June 15, 2002** — Arthur Andersen convicted of obstruction of
+- **February 7, 2002**, Skilling testifies before Congress.
+- **February 14, 2002**, Lay invokes the Fifth Amendment.
+- **June 15, 2002**, Arthur Andersen convicted of obstruction of
   justice (later overturned by the Supreme Court in 2005 on jury
   instruction grounds, by which time the firm had collapsed).
-- **January 2006** — Lay and Skilling go on trial.
-- **May 25, 2006** — Both convicted. Lay dies of a heart attack on
+- **January 2006**, Lay and Skilling go on trial.
+- **May 25, 2006**, Both convicted. Lay dies of a heart attack on
   July 5, 2006 before sentencing; Skilling sentenced to 24 years
   4 months (later reduced).
 

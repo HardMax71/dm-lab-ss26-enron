@@ -68,6 +68,18 @@ uv run --with jupyter --with pandas --with pyarrow --with matplotlib \
   --with seaborn --with networkx jupyter lab eda-5/enron_eda_week4.ipynb
 ```
 
+`eda-5/clean_dataset.py` turns the raw corpus into a deduplicated,
+body-cleaned, thread-aware dataset under `eda-5/clean/`: `messages_clean.parquet`
+(one row per unique message, with the cleaned body and quality flags) and
+`recipients_clean.parquet` (one row per To/Cc delivery). It drops the 51% of
+files that are duplicate copies, strips quoted history from bodies, rebuilds the
+recipient list, and reconstructs conversation threads. `DATASET_CLEANING.md`
+documents every step, the results, and the limitations. Run it with:
+
+```
+uv run eda-5/clean_dataset.py
+```
+
 `WHOS_WHO.md` is a short reference for the people who keep appearing in the
 notebooks: company shape, divisions, executive hierarchy, profiles for the
 named mailbox owners, and a collapse timeline. Worth a read before the
