@@ -53,7 +53,20 @@ uv run --with jupyter --with pandas --with pyarrow --with matplotlib \
   --with seaborn --with networkx jupyter lab eda-4/enron_eda_deeper.ipynb
 ```
 
-`eda-5/` is the current session's work, in progress on the `eda-5` branch.
+`eda-5/enron_eda_week4.ipynb` works through the week-four review points: a
+recoloured 24-hour activity plot (volume and per-year shape on separate honest
+scales), a completeness audit (the 517k files are about 252k distinct messages,
+with intact identity and timing headers but no threading headers and only a
+fifth of internal recipients covered by a mailbox), address-to-person
+resolution so the social plots count people not addresses, a reciprocal-cycle
+search that surfaces the senior-executive clique, the California and EES word
+charts on one shared scale, and a deletion analysis over time and by topic.
+Figures land in `eda-5/plots/`:
+
+```
+uv run --with jupyter --with pandas --with pyarrow --with matplotlib \
+  --with seaborn --with networkx jupyter lab eda-5/enron_eda_week4.ipynb
+```
 
 `WHOS_WHO.md` is a short reference for the people who keep appearing in the
 notebooks: company shape, divisions, executive hierarchy, profiles for the
