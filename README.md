@@ -65,7 +65,8 @@ Figures land in `eda-5/plots/`:
 
 ```
 uv run --with jupyter --with pandas --with pyarrow --with matplotlib \
-  --with seaborn --with networkx jupyter lab eda-5/enron_eda_week4.ipynb
+  --with seaborn --with networkx --with adjusttext --with plotly \
+  --with "kaleido==0.2.1" --with pillow jupyter lab eda-5/enron_eda_week4.ipynb
 ```
 
 `eda-5/clean_dataset.py` turns the raw corpus into a deduplicated,

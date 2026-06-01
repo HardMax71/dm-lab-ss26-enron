@@ -1,0 +1,279 @@
+\documentclass[aspectratio=169,14pt]{beamer}
+\usetheme{metropolis}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{pgfpages}
+
+% Figures live with the notebook that produces them (single source, 300 dpi).
+\graphicspath{{../eda-5/plots/}}
+
+% Slide number (current / total) in the footer
+\setbeamertemplate{frame numbering}[fraction]
+
+% --- Out-of-bounds detection --------------------------------------------
+% Build with  -usepretex='\def\strict{1}'  (see build.sh --strict) to draw a
+% black rule wherever content overflows the slide, so an out-of-bounds box is
+% impossible to miss in the PDF. Off by default, so the shipped deck is clean.
+\ifdefined\strict
+  \overfullrule=8pt
+  \hbadness=1000 \vbadness=1000
+\fi
+% ------------------------------------------------------------------------
+
+% --- Speaker notes -------------------------------------------------------
+% Hidden by default, so the handout PDF the audience reads carries no notes.
+% To get the presenter version (slide on the left, the data notes on the
+% right), comment the line below and uncomment the second one, then rebuild.
+\setbeameroption{hide notes}
+% \setbeameroption{show notes on second screen=right}
+% -------------------------------------------------------------------------
+
+% Every plot is included with the SAME box and keepaspectratio, so no figure
+% is ever stretched or squashed and none is resized differently from the rest.
+\newcommand{\plotframe}[4]{%
+  \begin{frame}{#1}
+    \begin{center}
+      \includegraphics[width=\linewidth,height=0.58\textheight,keepaspectratio]{#2}
+    \end{center}
+    \vspace{-0.5em}\footnotesize #3
+  \end{frame}%
+  \note{#4}}
+
+% Taller box for the dense per-community network plots, which need the height
+% to stay readable; one-line caption keeps it inside the slide.
+\newcommand{\plotframeT}[4]{%
+  \begin{frame}{#1}
+    \begin{center}
+      \includegraphics[width=\linewidth,height=0.66\textheight,keepaspectratio]{#2}
+    \end{center}
+    \vspace{-0.4em}\footnotesize #3
+  \end{frame}%
+  \note{#4}}
+
+\title{Enron Email Corpus -- Week 5}
+\subtitle{Cleaning the corpus, reworking the review}
+\author{Data Mining Lab SoSe 26 -- Task 5}
+\institute{TUM, Department of Computer Science}
+\date{June 3, 2026}
+
+\begin{document}
+
+% metropolis' title block packs ~20pt taller than \textheight, but the title
+% frame has room below it so nothing clips. Relax the overflow tolerance for
+% this one frame only, so the detector flags real out-of-bounds boxes and not
+% this known-benign one. Every content frame keeps the strict default.
+{\vfuzz=24pt \vbadness=\maxdimen \maketitle}
+\note{%
+  Plan: about 15 minutes, 13 content slides, roughly a minute each. Two
+  halves. First half: we cleaned the whole corpus this week, and the cleaning
+  by itself overturns two numbers from the week-2 report. Second half: with
+  clean data we redo the review points (the 24-hour plot, the social graph on
+  people, the word charts on one scale, deletion) and add the one thing we
+  never had before, conversation threads. Roles: plots by Max, report and this
+  deck by Len.}
+
+% ---------------------------------------------------------------
+\begin{frame}{From raw files to a clean corpus}
+  \small
+  Last week's raw-file problems: about half were duplicates, bodies carried
+  quoted history, addresses were split per person, and there were no thread
+  headers. We cleaned the corpus in four passes into \texttt{eda-5/clean/}:
+  \begin{itemize}
+    \item \textbf{Deduplicate} to one row per distinct message
+    \item \textbf{Clean bodies}: strip quoted history, HTML, disclaimers
+    \item \textbf{Resolve addresses}: spelling variants to one person
+    \item \textbf{Reconstruct threads}: subject + participant, 30-day gap
+  \end{itemize}
+  Result: \textbf{252{,}022} messages and \textbf{1.37\,M} recipient rows.
+\end{frame}
+\note{%
+  The framing: none of last week's plots were wrong arithmetic, they were
+  honest counts of the wrong unit, the file instead of the message. So the fix
+  is to clean once and rerun, not patch each plot. Dedup key: same sender,
+  subject, exact send time and recipient counts; checked against body hashes,
+  40 of 40 identical. The body cleaner cuts only on header-anchored reply
+  markers; an earlier version that also cut bare divider lines destroyed about
+  8,900 real newsletters, so we pulled that back. Threads: the release has no
+  In-Reply-To / References, so we rebuild from a normalised subject plus an
+  overlapping participant, capped at a 30-day gap so unrelated ``fyi'' notes do
+  not chain across years. Full procedure and limits are in DATASET\_CLEANING.md.}
+
+% ---------------------------------------------------------------
+\plotframe{Half the files are duplicates}{b1_dedup_waterfall.png}{%
+  \textbf{517{,}401} files collapse to \textbf{252{,}022} distinct messages
+  (\textbf{51\%} duplication). Every later count is on the distinct messages.}{%
+  About 203,000 of the removed copies are within one mailbox, the same message
+  filed in both inbox and a project folder, a normal Outlook habit. The other
+  roughly 63,000 are one message sitting in several people's mailboxes because
+  they were all on it. So a raw file count inflates broadcasts and carefully
+  filed memos many times over.}
+
+% ---------------------------------------------------------------
+\plotframe{What dedup changes}{b1b_dedup_corrections.png}{%
+  Two week-2 numbers were artifacts. \texttt{topic/project} folders drop from
+  \textbf{37\%} to about \textbf{11\%}; the largest mailbox flips from
+  \texttt{kaminski-v} to \texttt{dasovich-j}.}{%
+  Project and topic folders looked huge because they are where people re-file
+  copies of mail they already hold in inbox or sent, so they carry more than
+  their share of duplicates. Once each message counts once, sent and inbox are
+  the real bulk. kaminski-v was the raw ``largest mailbox'' at 28,465 files,
+  but it duplicated more heavily than dasovich-j, so the ranking was an
+  artifact of duplication, not size.}
+
+% ---------------------------------------------------------------
+\plotframe{How complete is the data}{b2_metadata_coverage.png}{%
+  Identity and timing are near-complete: sender \textbf{100\%}, timestamp
+  \textbf{99.9\%}, subject \textbf{96\%}. The threading headers are gone.}{%
+  Message-ID reads as 100 percent present but the values are machine-generated
+  placeholders with no link to the message they answer, and In-Reply-To and
+  References were stripped before release. That is the single biggest gap: the
+  corpus knows every message but not which message answered which. It is why
+  threads have to be reconstructed rather than read off.}
+
+% ---------------------------------------------------------------
+\plotframe{The 24-hour activity plot, fixed}{a1_weekday_hour_dual.png}{%
+  Top row (blue): one shared count scale, honest about volume. Bottom row
+  (green): each year on its own scale, honest about the daily shape. Empty
+  cells are white.}{%
+  The old plot put all four years on one dark-for-zero colour bar, so quiet
+  years read as empty and empty grids read as full. Splitting it fixes both.
+  The daily block is the same every year, about 14:00 to 23:00 UTC, which is
+  mid-morning to late afternoon in Houston. Weekends are white. The one
+  exception is 2002, thinner and shifted, a company being wound down.}
+
+% ---------------------------------------------------------------
+\plotframe{A keyhole onto Enron}{b4_recipient_coverage.png}{%
+  The 150 mailboxes wrote to about \textbf{33{,}000} distinct internal
+  accounts, but only about \textbf{17\%} of those have a mailbox of their own
+  in the release.}{%
+  This is the standing caveat behind every network and rate figure. The graph
+  is dense and complete among the 150 captured people and increasingly partial
+  as it reaches everyone else. We see one side of most conversations. The 150
+  were released because they were central to the FERC investigation, so they
+  are far more connected to each other than a random 150 employees would be.}
+
+% ---------------------------------------------------------------
+\plotframe{Addresses are not people}{c1_addresses_per_person.png}{%
+  Of 150 owners, \textbf{104} write from one address, \textbf{31} from two,
+  \textbf{6} from three or four. The multi-address cases are messy formatting
+  of one name, not extra accounts.}{%
+  Heaviest case is Vince Kaminski: kaminski, j.kaminski and j..kaminski.
+  One clarification on the feedback wording: here a mailbox really does equal a
+  person, the only repeated surnames (mckay, ring, whalley) are each two
+  different people. So nothing merges at the folder level; the multiplicity is
+  entirely in the addresses, and the next plots collapse them so each person is
+  one node.}
+
+% ---------------------------------------------------------------
+\plotframe{The reciprocal graph, grouped}{d2_reciprocal_cluster.png}{%
+  \textbf{150} owners, \textbf{4{,}768} two-way links, coloured by a modularity
+  split. Dense, but not structureless: five groups separate out.}{%
+  A link here means the two people mail each other in both directions. We lay
+  each community out as its own blob and drop the small executive and
+  government-affairs core in the centre, where its cross-group links are
+  shortest, so the colours group instead of scattering. The density is the
+  headline, but remember it is partly the FERC selection, not a natural office.}
+
+% ---------------------------------------------------------------
+\plotframeT{Working group 1: trading floor + research}{d3_1.png}{%
+  The largest community (56): the trading desk, research and risk around it.}{%
+  Kaminski, Buy, Arnold, Delainey, Beck. This is the core book-running floor;
+  research and risk sit inside it rather than beside it, which is why they
+  cluster together.}
+
+% ---------------------------------------------------------------
+\plotframeT{Working group 2: West-power / real-time desk}{d3_2.png}{%
+  36 people: the West-power / real-time desk that ran the California book.}{%
+  Forney, Presto, Campbell. This is the desk behind the California content in
+  the next section; it is tightly internally connected and links up to the
+  executive core.}
+
+% ---------------------------------------------------------------
+\plotframeT{Working group 3: ENA legal + East gas}{d3_3.png}{%
+  29 people: the ENA legal department and the East gas desk it served.}{%
+  Jones, Shackleton, Haedicke, Mann, Germany, Nemec. Legal and its client desk
+  show up as one community because they corresponded constantly.}
+
+% ---------------------------------------------------------------
+\plotframeT{Working group 4: pipelines / utility ops}{d3_4.png}{%
+  18 people: the pipelines and utility-operations group.}{%
+  Lokay, Hayslett, McConnell, Scott, Watson. The most self-contained group, the
+  operational side rather than trading or legal.}
+
+% ---------------------------------------------------------------
+\plotframeT{Working group 5: executives + government affairs}{d3_5.png}{%
+  The smallest (11), and the core that ties the others together.}{%
+  Lay, Skilling, Whalley with Dasovich, Kean, Shapiro, Steffes and general
+  counsel Derrick. Small but central; this is the group sitting in the middle of
+  the full graph two slides back.}
+
+% ---------------------------------------------------------------
+\plotframe{California vs EES, on one scale}{e1_california_ees_samescale.png}{%
+  Now on the full corpus, not a 25k sample: about \textbf{12{,}500} bodies
+  mention California against about \textbf{3{,}900} for EES. Same axis, so the
+  gap is real.}{%
+  California is the far heavier topic, and its companion words are the crisis
+  vocabulary, power, energy, state, market, price. EES is shorter and its words
+  are internal, organisational, the retail-services unit. Because the bodies
+  are cleaned, the words are the writers' own and not quoted history, and
+  flagged signatures and disclaimers are excluded so they cannot crowd the top.}
+
+% ---------------------------------------------------------------
+\plotframe{What gets deleted}{f2_deletion_topic_preference.png}{%
+  Deletion is topic-driven. Base rate about \textbf{14\%}. Far above it sit one
+  protest campaign (\texttt{donate}, \texttt{stock}, \texttt{lay}) and machine
+  noise; business words are kept.}{%
+  The over-deleted words belong to a mass campaign demanding Ken Lay donate his
+  stock-sale proceeds, thousands of near-identical messages swept straight into
+  his deleted folder, plus automated traffic like headlines and over-quota
+  warnings. Under-deleted are deal words: nda, raptor, abb, allegheny. On
+  timing (the other plot, f1), deletion just tracks overall volume and peaks in
+  late 2001, with no clean jump at any single collapse date. We also tested
+  whether leaving drove deletion: 76\% of mailboxes are end-loaded, median ratio
+  1.65, but the deleted-items buffer is emptied periodically, which produces
+  that pattern on its own, so it is not conclusive.}
+
+% ---------------------------------------------------------------
+\plotframe{Conversations, finally}{h1_threads.png}{%
+  Reconstruction gives \textbf{40{,}306} threads. Replies are fast: median
+  about \textbf{3 hours}, three quarters inside a day. Sizes are heavily
+  skewed, mostly short.}{%
+  A quarter of replies land within twenty minutes. The long tail is slow-burn
+  threads that resume after a pause; because our heuristic caps gaps at 30
+  days, one of those gets split in two, but that barely affects reply-speed or
+  size description. The single thread over a thousand messages is the protest
+  campaign from the previous slide, a blast rather than a conversation.}
+
+% ---------------------------------------------------------------
+\begin{frame}{Where we stand}
+  The corpus is now deduplicated, body-cleaned, address-resolved and
+  thread-aware: \textbf{252{,}022} messages from 150 mailboxes, 1999--2002.
+
+  \medskip
+  Three week-2 numbers moved once we counted messages, not files: the folder
+  mix inverts, the largest mailbox re-ranks, and the social core is denser than
+  it looked. The new material is threads, fast replies and a heavy-tailed size
+  distribution.
+
+  \medskip
+  \small The standing caveat is coverage, and the reconstructed threads are a
+  heuristic standing in for headers that no longer exist.
+\end{frame}
+\note{%
+  If asked what is next: this closes the descriptive phase. With a clean,
+  thread-aware table we can move to predictive work, the schedule turns there
+  next. If pressed on the cleaning's weakest point, say it is thread
+  reconstruction, because the headers are gone for good and we are inferring
+  them.}
+
+% ---------------------------------------------------------------
+\begin{frame}{}
+  \begin{center}\Large Questions?\end{center}
+  \vfill
+  \small\centering Full write-up: \texttt{eda-5/DATASET\_CLEANING.md} and
+  \texttt{eda-5/enron\_eda\_week4.ipynb}
+\end{frame}
+
+\end{document}
