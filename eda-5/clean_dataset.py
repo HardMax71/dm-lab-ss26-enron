@@ -13,6 +13,7 @@ eda-2/cache/, writes:
 
     eda-5/clean/messages_clean.parquet     one row per unique message
     eda-5/clean/recipients_clean.parquet   one row per (message, recipient)
+    eda-5/clean/people.parquet             one row per mailbox owner (aliases)
     eda-5/clean/clean_stats.json           machine-readable run statistics
 
 Pipeline stages, each printed as it runs:
@@ -29,6 +30,7 @@ import os
 import re
 import sys
 import time
+from collections import defaultdict
 from email import policy
 from email.parser import BytesParser
 from multiprocessing import Pool
@@ -258,6 +260,69 @@ class UnionFind:
 
 
 # --------------------------------------------------------------------------- #
+# Person identity resolution                                                  #
+# --------------------------------------------------------------------------- #
+def resolve_people(canon: pd.DataFrame, modal: float = 0.5,
+                   recover_min: int = 20):
+    """Map each internal sending address to the mailbox owner it belongs to.
+
+    A mailbox folder is not the same thing as a person: the same individual
+    sends from several spellings of their address, and a folder can hold mail
+    sent by an assistant or filed from someone else. We resolve ownership so a
+    later message can be attributed to the person who wrote it.
+
+    The Sent folder is authoritative: an address is the owner's when its local
+    part carries the owner surname OR it makes up at least `modal` of that
+    owner's Sent folder. The share rule catches owners whose folder label
+    differs from their e-mail name (carol.clair@ for `stclair-c`,
+    robin.rodrigue@ for `rodrique-r`). Two owners have no usable Sent folder at
+    all -- `harris-s` keeps only inbox and deleted, and `stokley-c`'s whole
+    mailbox is one custom-named folder that buckets as topic/project -- so they
+    are recovered from their modal surname-matching internal sender across every
+    folder, provided it appears at least `recover_min` times. Recovery only runs
+    for owners the Sent rule left empty, so it cannot disturb the rest. When one
+    address is claimed by several owners (the two Whalleys both file
+    greg.whalley@) the strongest claim wins: Sent-folder evidence over recovery,
+    then the higher message count.
+
+    Returns (addr2owner, owner_addrs, recovered)."""
+    owners = sorted(canon["user"].unique())
+    surname = {u: u.split("-")[0] for u in owners}
+    fa = canon["from_addr_norm"].fillna("")
+    internal = canon[fa.str.endswith("@enron.com") & (fa != "")]
+
+    claims: dict = defaultdict(dict)            # addr -> owner -> (priority, count)
+    sent = internal[internal["folder_group"].eq("sent")]
+    for u, g in sent.groupby("user"):
+        sn = surname[u]
+        vc = g["from_addr_norm"].value_counts()
+        share = vc / vc.sum()
+        for a, c in vc.items():
+            if (sn and sn in a.split("@")[0]) or share[a] >= modal:
+                claims[a][u] = (2, int(c))      # priority 2 = sent-folder evidence
+
+    resolved = {u for d in claims.values() for u in d}
+    recovered: list = []
+    for u, g in internal.groupby("user"):
+        if u in resolved:                       # Sent rule already covers this owner
+            continue
+        sn = surname[u]
+        vc = g["from_addr_norm"].value_counts()
+        if not len(vc):
+            continue
+        a = vc.index[0]                          # modal internal sender in the mailbox
+        if sn and sn in a.split("@")[0] and vc.iloc[0] >= recover_min:
+            claims[a][u] = (1, int(vc.iloc[0]))  # priority 1 = recovery
+            recovered.append(u)
+
+    addr2owner = {a: max(d, key=d.get) for a, d in claims.items()}
+    owner_addrs: dict = defaultdict(list)
+    for a, u in addr2owner.items():
+        owner_addrs[u].append(a)
+    return addr2owner, owner_addrs, sorted(recovered)
+
+
+# --------------------------------------------------------------------------- #
 def main() -> None:
     t0 = time.time()
 
@@ -276,6 +341,18 @@ def main() -> None:
     rich = rich.merge(hdr, on="rel_path", how="left")
     n_files = len(rich)
     STATS["n_files"] = int(n_files)
+
+    # Folder `phanis-s` is a garbled duplicate of `panus-s`: both are Stephanie
+    # Panus's mailbox. Every phanis-s file carries X-FileName "spanus...pst" and
+    # canonical id CN=SPANUS, identical to panus-s, and phanis-s's own sent mail
+    # is From: stephanie.panus@enron.com. "Phanis" is just a corrupted spelling
+    # of the origin tag, so we fold it into panus-s to count her once rather
+    # than as a phantom 151st person.
+    DUPLICATE_FOLDERS = {"phanis-s": "panus-s"}
+    n_dup = int(rich["user"].isin(DUPLICATE_FOLDERS).sum())
+    rich["user"] = rich["user"].replace(DUPLICATE_FOLDERS)
+    STATS["merged_duplicate_folders"] = DUPLICATE_FOLDERS
+    print(f"  merged duplicate folder(s): {DUPLICATE_FOLDERS} ({n_dup:,} files)")
 
     rich["key"] = (
         rich["from_addr"].fillna("") + "|" + rich["subject"].fillna("") + "|"
@@ -404,6 +481,47 @@ def main() -> None:
           f"empty subject+body {STATS['empty_subject_and_body']:,}, "
           f"big-file/tiny-body {STATS['bigfile_tinybody']:,}")
 
+    # ---- Stage 2d: resolve sender identities to mailbox owners ----------- #
+    banner("Stage 2d/5  resolve sending addresses to mailbox owners")
+    addr2owner, owner_addrs, recovered = resolve_people(canon)
+    canon["sender_person"] = canon["from_addr_norm"].map(addr2owner)
+    attributed = canon["sender_person"].notna()
+    auth_counts = canon.loc[attributed].groupby("sender_person").size()
+    n_owners = int(canon["user"].nunique())
+    owners_resolved = sorted(set(addr2owner.values()))
+
+    def _resolved_via(u: str) -> str:
+        if u in recovered:
+            return "recovered_nonsent"
+        return "sent_folder" if u in set(owners_resolved) else "unresolved"
+
+    people = pd.DataFrame([
+        {"owner": u, "surname": u.split("-")[0],
+         "n_addresses": len(owner_addrs.get(u, [])),
+         "addresses": ";".join(sorted(owner_addrs.get(u, []))),
+         "resolved_via": _resolved_via(u),
+         "n_authored": int(auth_counts.get(u, 0))}
+        for u in sorted(canon["user"].unique())
+    ])
+
+    STATS["mailbox_owners"] = n_owners
+    STATS["owners_resolved"] = len(owners_resolved)
+    STATS["owners_recovered_no_sent"] = recovered
+    STATS["owners_unresolved"] = people.loc[
+        people["resolved_via"] == "unresolved", "owner"].tolist()
+    STATS["authored_msgs_attributed"] = int(attributed.sum())
+    STATS["authored_attributed_pct"] = round(attributed.mean() * 100, 1)
+    STATS["owners_ge30_authored"] = int((auth_counts >= 30).sum())
+    print(f"  mailbox owners (after duplicate merge): {n_owners}")
+    print(f"  owners with a resolved sending address: {len(owners_resolved)}")
+    print(f"  recovered from non-sent folders:        "
+          f"{', '.join(recovered) if recovered else 'none'}")
+    print(f"  owners still unresolved:                "
+          f"{', '.join(STATS['owners_unresolved']) or 'none'}")
+    print(f"  messages attributed to a known author:  {int(attributed.sum()):,} "
+          f"({STATS['authored_attributed_pct']}%)")
+    print(f"  owners with >=30 authored messages:     {STATS['owners_ge30_authored']}")
+
     # ---- Stage 3: clean recipient list ----------------------------------- #
     banner("Stage 3/5  rebuild recipient list (To/Cc only; Bcc is an artifact)")
     edges = pd.read_parquet(
@@ -434,6 +552,8 @@ def main() -> None:
     # normalise recipient address + flag the malformed/DN-leak ones
     edges["recipient_addr_norm"] = edges["recipient_addr"].map(norm_addr)
     edges["recipient_addr_valid"] = edges["recipient_addr_norm"].map(addr_is_valid)
+    # resolve each recipient address to a mailbox owner where one is known
+    edges["recipient_person"] = edges["recipient_addr_norm"].map(addr2owner)
     STATS["recipient_malformed"] = int((~edges["recipient_addr_valid"]).sum())
     STATS["recipient_identities_merged_by_norm"] = int(
         edges.loc[edges["recipient_addr"] != "", "recipient_addr"].nunique()
@@ -552,6 +672,7 @@ def main() -> None:
         "message_id", "date", "date_plausible",
         "from_addr", "from_addr_norm", "from_domain", "is_internal_sender",
         "from_addr_mangled", "from_addr_valid", "sent_not_by_owner",
+        "sender_person",
         "subject", "canon_subject",
         "to_count_clean", "cc_count_clean", "recipient_count",
         "external_recipient_count", "has_external_recipient",
@@ -568,15 +689,17 @@ def main() -> None:
 
     recipients = edges[[
         "message_id", "from_addr", "recipient_addr", "recipient_addr_norm",
-        "recipient_domain", "recipient_addr_valid",
+        "recipient_domain", "recipient_addr_valid", "recipient_person",
         "recipient_is_list", "is_self",
         "channel", "is_internal_recipient",
     ]].reset_index(drop=True)
 
     mpath = os.path.join(OUT, "messages_clean.parquet")
     rpath = os.path.join(OUT, "recipients_clean.parquet")
+    ppath = os.path.join(OUT, "people.parquet")
     messages.to_parquet(mpath, compression="zstd", index=False)
     recipients.to_parquet(rpath, compression="zstd", index=False)
+    people.to_parquet(ppath, compression="zstd", index=False)
 
     STATS["out_messages_rows"] = int(len(messages))
     STATS["out_messages_cols"] = int(messages.shape[1])
@@ -591,6 +714,8 @@ def main() -> None:
           f"{messages.shape[1]} cols  ({STATS['out_messages_mb']} MB)")
     print(f"  recipients_clean.parquet {len(recipients):,} rows  "
           f"({STATS['out_recipients_mb']} MB)")
+    print(f"  people.parquet           {len(people):,} owners x "
+          f"{people.shape[1]} cols")
 
     with open(os.path.join(OUT, "clean_stats.json"), "w") as fh:
         json.dump(STATS, fh, indent=2)

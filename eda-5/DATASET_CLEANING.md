@@ -170,6 +170,42 @@ addresses that cannot be resolved to a well-formed address at all, and
 `from_addr_mangled` marks the dot-mangled ones. **Success**. The bad addresses
 are now labelled and a clean form is available, without discarding the originals.
 
+## Step 2c: Resolve mailbox owners to their sending addresses
+
+A mailbox folder is not a person. The same individual sends from several
+spellings of their address, a folder can hold mail an assistant sent on the
+owner's behalf, and at least one folder is a garbled duplicate of another. To
+let a later step attribute a message to whoever wrote it, this step maps each
+internal sending address to the mailbox owner it belongs to.
+
+The Sent folder is treated as authoritative: an address is an owner's when its
+local part carries the owner surname, or when it makes up at least half of that
+owner's sent mail. The share rule catches owners whose folder label differs from
+their e-mail name, such as `carol.clair@` for `stclair-c` or `robin.rodrigue@`
+for `rodrique-r`. Two owners have no usable Sent folder at all (`harris-s` keeps
+only inbox and deleted; `stokley-c`'s whole mailbox is one custom-named folder
+that buckets as `topic/project`), so they are recovered from their modal
+surname-matching internal sender across every folder. Recovery runs only for
+owners the Sent rule left empty, so it cannot disturb the rest, and where one
+address is claimed by two owners (both Whalley folders file `greg.whalley@`) the
+stronger claim wins, Sent-folder evidence first, then the higher count.
+
+One folder, `phanis-s`, is not a separate person. Its twenty messages and its own
+small `sent_items` all come from `stephanie.panus@enron.com`, and the raw headers
+confirm it: every file carries `X-FileName: spanus (Non-Privileged).pst` and the
+canonical id `CN=SPANUS`, identical to the properly named `panus-s`. "Phanis" is
+a corrupted spelling of the same origin tag, so it is folded into `panus-s`
+before anything else, leaving 149 distinct owners.
+
+**Result.** All 149 owners resolve to at least one sending address, **42.7%** of
+the corpus is attributed to a known author (`sender_person`), and recipients are
+resolved the same way (`recipient_person`). 143 owners have at least 30 messages
+of their own, enough for per-person analysis. A `people.parquet` table lists each
+owner's addresses and how they were resolved. One caveat: two assistant-run
+executive desks resolve to the assistant's address (Ken Lay to Rosalee Fleming,
+one Whalley desk to Liz Taylor), which is right for reading the desk's behaviour
+but not for attributing content to the executive personally. **Success.**
+
 ## Step 3: Rebuild the recipient list
 
 Recipients are taken from the cached edge table, restricted to the canonical
@@ -379,7 +415,8 @@ The existing `date_outlier` column in the source table agrees exactly with
 | Threading | none (headers gone) | reconstructed, 40,306 multi-msg threads, time-bounded |
 | Mangled addresses | unflagged | normalised + flagged (`_norm`, `_valid`) |
 | Boilerplate / lists / self-mail | unmarked | flagged, not removed |
-| Columns | 43, with phantom Bcc | 37, no phantom fields, with quality flags |
+| Columns | 43, with phantom Bcc | 38, no phantom fields, with quality flags + resolved author |
+| Mailbox owners | 150 folders (one a duplicate) | 149 people, all resolved to an address |
 
 The dataset is now one row per real message, with bodies that contain only the
 text that message actually added, recipients that reflect only real To/Cc
@@ -403,11 +440,12 @@ later work can account for them rather than trip over them.
 | `from_domain`, `is_internal_sender` | sender domain and whether it is an enron.com address |
 | `from_addr_mangled`, `from_addr_valid` | sender had dot-mangling; sender resolves to a well-formed address |
 | `sent_not_by_owner` | in a `sent` folder but the from-address is not the mailbox owner (assistant / shared / misfiled) |
+| `sender_person` | mailbox owner the sender address resolves to, or null for external/unresolved senders |
 | `subject`, `canon_subject` | original subject and the prefix-stripped, lowercased form used for threading |
 | `to_count`, `cc_count`, `recipient_count` | recipient counts recomputed from clean To/Cc edges |
 | `external_recipient_count`, `has_external_recipient` | non-enron.com recipients |
 | `list_recipient_count`, `has_list_recipient` | how many recipients are distribution/role lists |
-| `mailbox_owner` | which of the 150 released mailboxes the canonical copy came from |
+| `mailbox_owner` | which of the 149 released mailboxes the canonical copy came from (`phanis-s` folded into `panus-s`) |
 | `folder_group`, `file_size` | folder class of the canonical copy; original file size in bytes |
 | `body`, `body_chars` | cleaned body text and its length |
 | `body_was_trimmed` | quoted history, disclaimer, HTML or attachment placeholder was removed |
@@ -425,7 +463,18 @@ later work can account for them rather than trip over them.
 | `from_addr` | sender |
 | `recipient_addr`, `recipient_addr_norm` | one recipient, as found and dot-normalised |
 | `recipient_domain`, `recipient_addr_valid` | recipient domain; whether it resolves to a well-formed address |
+| `recipient_person` | mailbox owner the recipient address resolves to, or null when unknown |
 | `recipient_is_list` | recipient is a distribution / role list address |
 | `is_self` | recipient is the message's own sender (to-self / self-Cc) |
 | `channel` | `to` or `cc` |
 | `is_internal_recipient` | recipient is an enron.com address |
+
+`people.parquet` (one row per mailbox owner):
+
+| Column | Meaning |
+|--------|---------|
+| `owner` | mailbox handle (e.g. `kaminski-v`) |
+| `surname` | surname parsed from the handle |
+| `n_addresses`, `addresses` | how many sending addresses resolved to this owner, and the `;`-joined list |
+| `resolved_via` | `sent_folder` (Sent-folder rule) or `recovered_nonsent` (no usable Sent folder) |
+| `n_authored` | messages in the corpus attributed to this owner as the author |
