@@ -28,6 +28,8 @@
 
 <p><img src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-5/plots/b1b_dedup_corrections.png" alt="Folder mix and mailbox ranking before and after deduplication" /></p>
 
+<p>One point the left panel is worth being explicit about, since it reads oddly at first glance: those bars are each folder's <em>share</em> of the corpus, not a count. No folder ends up with more messages than files. Every folder's absolute count falls after deduplication (<code>sent</code>, for instance, drops from 126,058 files to 97,059 messages); <code>sent</code> and <code>inbox</code> only climb as a percentage because <code>topic/project</code>, which was overwhelmingly duplicate copies, is stripped out and shrinks the total the shares are measured against. The plot carries this note inline so the rising bars are not misread as growth.</p>
+
 <p>The fields that say who sent what and when are essentially complete: a sender on every file, a usable timestamp on 99.9%, a subject on 96%. The fields that would reconstruct conversations are gone. Message-ID reads as 100% present, but the values are machine-generated placeholders with no link to what they reply to, and In-Reply-To and References were stripped before release. That is the single biggest gap in the data.</p>
 
 <p><img src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-5/plots/b2_metadata_coverage.png" alt="Header field coverage across the corpus" /></p>
