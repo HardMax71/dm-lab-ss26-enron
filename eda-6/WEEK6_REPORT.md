@@ -1,71 +1,86 @@
 <p>This page reports the tasks and outcomes of week 6.</p>
 
-<h3 data-nh-numbering="1.1.1. ">From last week: people, not folders</h3>
+<h3 data-nh-numbering="1.1.1. ">Predicting the person and the group from the mail body</h3>
 
-<p>Week four ended on the point that a mailbox folder is not the same thing as a person, and resolved each owner's sending addresses so the social plots counted people rather than spellings. That resolution was good enough to draw a graph but too shallow to build on, because it only ever looked inside each owner's <code>sent</code> folder. This week's work is clustering the people, and a clustering is only as honest as the identities underneath it, so before any plot we went back and fixed the resolution in the cleaned dataset itself.</p>
-
-<p>Three of the 150 mailbox folders refused to resolve, and each turned out to be a different kind of corpus quirk worth recording. <code>harris-s</code> (Steven Harris) keeps only an inbox and a deleted-items folder, with no <code>sent</code> folder at all, so his outgoing mail survives only as copies filed in other people's mailboxes. <code>stokley-c</code> (Chris Stokley) is stranger: his entire mailbox is one custom-named folder, <code>chris_stokley</code>, which the folder classifier buckets as <code>topic/project</code>, so nothing he owns is ever tagged as sent even though <code>chris.stokley@enron.com</code> is the sender on 511 of those messages. Both send from an address that plainly carries their surname; they were missed only because that address never sat in a folder called "sent".</p>
-
-<p>The third case, <code>phanis-s</code>, is not a person at all. The folder holds twenty messages, and both the mail it contains and the mail in its own small <code>sent_items</code> come from <code>stephanie.panus@enron.com</code>. The raw headers settle it: every file in <code>phanis-s</code> carries <code>X-FileName: spanus (Non-Privileged).pst</code> and the owner's own sent mail reads <code>X-From: Panus, Stephanie &lt;/...CN=SPANUS&gt;</code>, byte-identical to the properly named <code>panus-s</code> folder. "Phanis" is a garbled spelling of the same origin tag, and Stephanie Panus, a senior legal specialist in Enron's wholesale-services legal department, already has a real folder. We fold <code>phanis-s</code> into <code>panus-s</code> so she is counted once rather than as a phantom 151st person.</p>
-
-<p>The fix lives in <code>eda-5/clean_dataset.py</code> and regenerates the cleaned tables. The Sent folder stays authoritative: an address belongs to an owner when its local part carries the owner surname, or when it makes up at least half of that owner's sent mail (this second rule catches owners whose folder label differs from their e-mail name, like <code>carol.clair@</code> for <code>stclair-c</code>). The two owners with no usable sent folder are recovered from their surname-matching modal sender across every folder, and that recovery runs only for owners the sent rule left empty, so it cannot disturb the rest. Where one address is claimed by two owners, as <code>greg.whalley@</code> is by both Whalley folders, the stronger claim wins. The result is a <code>sender_person</code> column on every message and a <code>recipient_person</code> column on every delivery, plus a small <code>people.parquet</code> listing each owner's resolved addresses. All 149 owners now resolve, 42.7% of the corpus is attributed to a known author, and 143 owners have at least 30 messages of their own, enough to describe their behaviour. One honest wrinkle: two executive desks resolve to an assistant's address (Ken Lay's sent mail to Rosalee Fleming, one Whalley desk to Liz Taylor), so "authored by" for those mailboxes means "sent from that desk", which is right for a behavioural reading but a caveat for content.</p>
+<p>Last week split the 149 owners into three behavioural groups from how they use mail: 8 broadcasters/executives, 50 outward-facing people, and an internal majority of 85. The text of their messages played no part in that split. This week we ask two things of the body text alone: can it recover the group, and can it name the person who wrote a message. The answers go opposite ways.</p>
 
 <h4 data-nh-numbering="1.1.1.1. ">Tasks of this week</h4>
 
-<p>Dataset identity fix, plot creation - Max</p>
+<p>Prediction experiments, plot creation - Max</p>
 
 <p>Writing of report, creation of presentation, presentation - Len</p>
 
 <h4 data-nh-numbering="1.1.1.2. ">Results/Findings/Outcomes</h4>
 
-<p><strong>The features that describe a person.</strong> For each of the 143 profiled owners we build a vector of twelve features that describe communication behaviour, not content: how much they send, how long their messages run, how many people they write to at once, how much of their mail leaves the company, how often they open a thread rather than reply to one, how concentrated their activity is in time, how long they are active, how much of their mailbox is deleted, and their in- and out-degree in the internal people-graph. Counts that span orders of magnitude (message volume, degree, tenure) are log-scaled so a handful of heavy senders do not dominate, then every feature is standardised so each weighs the same. The features are only loosely related to one another: volume, reach and degree move together, as you would expect, but most pairs are weakly correlated, so the vector is not secretly one number and there is real structure to find.</p>
+<p><strong>Setup.</strong> We pool every cleaned, non-boilerplate body from a profiled author, cap it at 120 per person, and represent the 15,587 messages three ways:</p>
 
-<p><img src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-6/plots/p1_feature_correlation.png" alt="Spearman correlation between the twelve per-person features" /></p>
+<ul>
+<li><strong>TF-IDF words</strong> - a sparse word-count vector, the usual content baseline.</li>
+<li><strong>Dense embedding</strong> - the same vocabulary squeezed into 200 latent dimensions.</li>
+<li><strong>Char 3-4-grams</strong> - letter patterns that catch spelling and style rather than topic.</li>
+</ul>
 
-<p><strong>How many groups.</strong> We cluster with Ward's method, which repeatedly merges the two most similar people or groups, and read the number of groups off two diagnostics. The silhouette score measures how much tighter a person sits with its own group than with the next nearest one, rewarding clean separation; the within-cluster spread measures how much variation a given number of groups leaves unexplained, and its elbow marks diminishing returns. The silhouette is highest at three groups (about 0.18) and falls if a fourth is forced, so we cut the tree at three. Even the peak is modest, which is the honest summary for human behaviour: people lie on a gradient with a couple of distinctive corners, not three cleanly separated islands, so the groups are descriptive roles rather than hard boxes.</p>
+<p>A linear classifier reads each one.</p>
 
-<p><img src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-6/plots/p2_k_selection.png" alt="Silhouette and within-cluster spread by number of groups" /></p>
+<p><strong>The group hides from the body.</strong> One catch decides this experiment. Split the messages at random and the same person sits in both train and test, so the model can spot the author and look up their group. Holding out whole people removes that shortcut. The table compares the two splits against a baseline that always guesses "internal", correct on 64% of messages.</p>
 
-<p><strong>The three groups in two dimensions.</strong> A principal-component projection flattens the twelve-dimensional cloud onto the plane that preserves the most spread, and the arrows show how the original features point on it. The first axis is essentially volume and reach, the second separates outward, external mail from internal traffic. The groups land where their names say. A small <strong>broadcasters / executives</strong> group of eight sits high on the external-versus-internal axis, sending long messages to many recipients at once; this is the announcement and direction-setting traffic, and it holds Lay, Skilling and a Whalley desk. An <strong>outward-facing</strong> group of fifty lifts along the external axis on a lighter internal footprint, the signature of deal-makers and counterparty contacts. The large <strong>internal majority</strong> of eighty-five fills the middle. The split is a gradient, not a gap, exactly as the silhouette warned.</p>
+<table>
+<thead><tr><th>Group prediction (3 classes)</th><th>Random split</th><th>Held-out people</th></tr></thead>
+<tbody>
+<tr><td>TF-IDF words</td><td>74%</td><td>59%</td></tr>
+<tr><td>Dense embedding</td><td>69%</td><td>59%</td></tr>
+<tr><td>Char 3-4-grams</td><td>73%</td><td>60%</td></tr>
+<tr><td><em>Baseline (always "internal")</em></td><td colspan="2"><em>64%</em></td></tr>
+</tbody>
+</table>
 
-<p><img src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-6/plots/p3_pca_clusters.png" alt="PCA projection of the 143 people coloured by behavioural group" /></p>
+<p>On a random split every representation beats the baseline. Held out by person, all three fall under it. The confusion matrix shows what happens: for an author it has never read, the model files the broadcasters (under 1 in 20 caught) and most of the outward-facing group into the internal majority.</p>
 
-<p><strong>The hierarchy behind the cut.</strong> The dendrogram merges the two most similar people, then the two most similar groups, all the way up, so the height at which two branches join is how different they are. With 143 people the full tree is unreadable, so the plot shows its top, grouped down to twelve cluster-leaves, each labelled with how many people it holds (the counts sum to 143). The shape is the point: a couple of small tight branches separate at a large height while the bulk of the company merges late into one internal mass, which is why the silhouette favoured a small number of groups and why pushing past three only chips small pieces off that mass. The dashed line is the three-group cut, and each branch is labelled with its group name and size: eight broadcasters, fifty outward-facing, eighty-five internal. Because the tree is grouped to twelve leaves it shows cluster blocks rather than named individuals; how individuals differ from one another is taken up at the end of the report, where it turns out to be a much stronger signal than the group structure.</p>
+<p><img src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-6/plots/w6_1_group_prediction.png" alt="Group prediction beats the baseline on a random split but falls below it on held-out people" style="max-width:100%; height:auto;" /></p>
 
-<p><img src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-6/plots/p4_dendrogram.png" alt="Ward hierarchical clustering dendrogram of the 143 people" /></p>
+<p><strong>The person does not.</strong> The same vectors name the author with ease. We hold out a fifth of each person's mail and grow the lineup from 10 candidates to 50.</p>
 
-<p><strong>What defines each group.</strong> The heatmap reads each group against the average person. Both the colour and the printed number show the distance from the average in standard deviations, darker and larger meaning more distinctive; which side of average each group sits on is spelled out next. The picture is clean. The broadcasters send long messages to many people with wide out-degree and open threads more than they reply. The outward-facing group is defined by external mail, with the lightest internal degree and a small weekend lean. The internal majority is the engine room: the most messages, the densest internal degree, the most Cc traffic, the lowest deletion. The differences run along communication role, not department, which is the interesting part and sets up the next plot.</p>
+<table>
+<thead><tr><th>Author identification (top-1)</th><th>10 people</th><th>30 people</th><th>50 people</th></tr></thead>
+<tbody>
+<tr><td>TF-IDF words</td><td>74%</td><td>60%</td><td>58%</td></tr>
+<tr><td>Char 3-4-grams</td><td>73%</td><td>61%</td><td>60%</td></tr>
+<tr><td>Dense embedding</td><td>70%</td><td>53%</td><td>51%</td></tr>
+<tr><td><em>Chance</em></td><td><em>10%</em></td><td><em>3%</em></td><td><em>2%</em></td></tr>
+</tbody>
+</table>
 
-<p><img src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-6/plots/p5_cluster_profiles.png" alt="Group means of every feature in standard deviations from the overall mean" /></p>
+<p>Character style alone nearly matches the full vocabulary. The 200-dimension embedding lags because it drops the rare words that pin a person down. The right panel ranks the 30 most active people by how often their own mail comes back: narrow-topic specialists on top, writers of short internal notes at the bottom.</p>
 
-<p><strong>Behaviour cuts across the social communities.</strong> Last week a modularity split of the reciprocal people-graph found five communities that mapped onto real parts of the company: the trading floor and risk desk around Kaminski and Lay, a second trading group, the West-power desk around Forney, the pipelines and utility-operations group around Lokay and Hayslett, and the ENA legal department around Jones and Shackleton. Those communities are about who talks to whom; the three groups here are about how a person communicates. The cross-tab shows the two views are largely orthogonal. Every social community is mostly internal-majority members, and the broadcasters and outward-facing people are scattered across communities rather than forming one of their own. Communication role and social neighbourhood are two different lenses on the same people.</p>
+<p><img src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-6/plots/w6_2_person_identification.png" alt="Author identification sits far above chance for all three representations" style="max-width:100%; height:auto;" /></p>
 
-<p><img src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-6/plots/p6_group_vs_community.png" alt="Behavioural group against social community, people count" /></p>
+<p><strong>What the body does carry.</strong> We average each person's message embeddings and project to two dimensions, mapping the corpus by content. The behavioural colours mix together. What sorts the map is topic and desk: the California and power names in one area, trading and contracts in others. The outward-facing group leans to one side, the weak lean the classifier half-caught, but nowhere near a clean split.</p>
 
-<p><strong>Do the groups line up with rank?</strong> The clusters are built only from behaviour, so as an external check we bring in job titles from the Shetty-Adibi annotation of the corpus, which joins one-to-one onto our 149 owners and gives each a status from CEO down to Employee (a third are left unlabelled). The alignment is real but weak. Mean seniority trends the way intuition expects, broadcasters highest at 4.0, the internal majority next at 2.8, the outward-facing group lowest at 2.1, but the detail undercuts any tidy reading: most of the actual vice-presidents (17 of 23) sit in the large internal majority rather than the small broadcaster cluster, and the outward-facing group is where the traders and lower-tenure employees concentrate. Behaviour reflects communication role and intensity, which is correlated with rank but is clearly not the same axis. With a third of the people carrying no listed title this is a sanity check rather than a scoreboard, but it confirms the clusters are picking up how people communicate, not simply how senior they are.</p>
+<p><img src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-6/plots/w6_3_content_map.png" alt="People mapped by writing content, with the behavioural groups overlapping" style="max-width:100%; height:auto;" /></p>
 
-<p><img src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-6/plots/p8_group_vs_title.png" alt="Behavioural group against external job title and mean seniority" /></p>
+<p><strong>Individual fingerprints.</strong> Each person's most over-represented words (log-odds with a shrinkage prior, own name removed) read as a clear beat:</p>
 
-<p><strong>What they write about, and why the next step needs embeddings.</strong> The groups above are built from behaviour. The body-to-group prediction the schedule turns to next will instead work from content: given only a message body, which group of people does it belong to? As a first look we pool each person's cleaned, non-boilerplate bodies into one document, turn the 143 documents into TF-IDF vectors (term frequencies weighted down for words common across the corpus) over the shared vocabulary, and project them to two dimensions. Topical structure does exist: a content-only clustering separates a West-power desk (iso, ferc, ercot, transmission), a trading-floor block (mmbtu, nymex, sitara), and an ENA legal block (isda, master, guaranty). But it is faint, scoring a silhouette near 0.05, far below the behavioural 0.18. Crucially, when the content map is coloured by the behavioural group we would want to predict, the groups overlap almost completely.</p>
+<ul>
+<li>Kaminski - research, risk, Rice</li>
+<li>Dasovich - California, power, electricity</li>
+<li>Jones - counterparties, ISDA masters</li>
+<li>Arnold - NYMEX, volatility</li>
+<li>Forney - ERCOT, the real-time desk</li>
+<li>Lokay - pipeline capacity, Transwestern, Waha</li>
+</ul>
 
-<p><img src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-6/plots/p7_content_overlap.png" alt="TF-IDF content projection coloured by behavioural group, showing heavy overlap" /></p>
+<p>This is what the author-identification picked up, and what a group label built from reach and broadcast never lines up with.</p>
 
-<p>The reading is that everyone at Enron writes about overlapping business in shared vocabulary, so an unsupervised bag-of-words view cannot pull the groups apart. But overlap in a projection is not the same as unpredictability, so the next step is to run the prediction directly rather than infer it from a clustering score.</p>
-
-<p><strong>What body text actually predicts.</strong> We label every cleaned message body with its author's behavioural group and ask a plain TF-IDF plus linear classifier to recover the group, scoring it on held-out people (a group-aware k-fold) so it has to generalise to authors it never saw. It cannot: about 54% accuracy, below the 64% you reach by always guessing the internal majority, with the broadcasters swallowed whole into that majority. Bag-of-words on the body does not carry the behavioural group for an unseen person, which is the concrete, supervised version of the overlap above and the reason the real prediction step moves to learned embeddings. The same vectors tell the opposite story about individuals: asked which of the most active people wrote a held-out message, the classifier is right about three quarters of the time among ten candidates and three fifths among thirty, against a one-in-ten and one-in-thirty chance. People are highly recognisable from their own words; their behavioural group is not. Content is an individual fingerprint, while the groups are defined by communication structure that the words barely reflect.</p>
-
-<p><img src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-6/plots/p9_prediction_baselines.png" alt="Group prediction below the majority baseline, but individual author identification far above chance" /></p>
-
-<p><strong>What makes an individual recognisable.</strong> If individuals are that identifiable, what gives them away? For a handful of well-known people we take the words most over-represented in their own mail against everyone else's, using a log-odds measure with a shrinkage prior so rare words do not dominate, and drop each person's own name. Every one resolves into a clear topic signature: Kaminski into research, risk and Rice; Dasovich into California, the state and electricity; Tana Jones into counterparties and ISDA masters; John Arnold into NYMEX and volatility; Forney into ERCOT and the power desk; Lokay into pipeline capacity and the Waha hub. These are the differences between individual persons that the author-identification score was picking up, and the raw material a per-person embedding will encode more fully.</p>
-
-<p><img src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-6/plots/p10_distinctive_words.png" alt="Each person's most distinctive words, a recognisable topic signature per individual" /></p>
+<p><img src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-6/plots/w6_4_distinctive_words.png" alt="Each person's most distinctive words, a topic signature per individual" style="max-width:100%; height:auto;" /></p>
 
 <h4 data-nh-numbering="1.1.1.3. ">Discussion/Challenges/Special remarks</h4>
 
-<p>The biggest challenge this week was again upstream of the plots: the person identities had to be trustworthy before clustering them meant anything, and the three unresolved folders each needed a different fix rather than a blanket rule. The tempting shortcut, matching any address that contains an owner's surname across all their folders, quietly broke several owners; it merged Kaminski's research team into Kaminski because their mail sits in his sent folder, and it pulled a different Elizabeth Lay into Ken Lay on the shared surname. Keeping the Sent folder authoritative and using the all-folder match only as a last-resort recovery for owners with no sent folder avoided both, at the cost of two assistant-run executive desks resolving to the assistant's address. We kept that trade because the alternative loses five legitimately resolved owners to spare one questionable one.</p>
-
-<p>The clustering itself is soft, and the report says so rather than dressing three modest groups up as clean classes. The silhouette around 0.18 means a person near a boundary could reasonably belong to either side, and the third group is a gradient that only sub-divides weakly. The honest finding is the shape of that gradient, two small distinctive roles standing out from a large internal mass, plus the fact that the shape runs along communication role and is orthogonal to the social communities, not a claim that the company falls into three tidy types.</p>
+<ul>
+<li>Who wrote a message is easy to read off the body; which behavioural group they sit in is not. The strong random-split number was author memorisation, not group learning.</li>
+<li>The evaluation was the real work. Only a person-level split exposes the leak, and it drops the score by 15 points.</li>
+<li>Caveats carry over: the 120-message cap discards volume from the heaviest senders, and two executive desks resolve to an assistant, so "wrote" means "sent from that desk".</li>
+</ul>
 
 <h4 data-nh-numbering="1.1.1.4. ">Open Ends</h4>
 
-<p>The behavioural groups are descriptive roles, not categories, and the same caveat about coverage that has followed every week still holds: only the 149 released mailboxes have a full two-sided profile, and the people they wrote to are seen from one side. The body-to-group prediction the schedule turns to next now has a clear target. The baseline marks out the hard part precisely: a word-count classifier identifies the individual author well but lands below the majority baseline on the behavioural group for unseen people, so the work is to encode each body with a sentence-embedding model and see whether the group boundary, which plain words miss, becomes learnable in that space. The individual fingerprints are already strong, so the open question is not whether people are distinguishable but whether their writing carries the structural role the groups are built on, or whether predicting that role needs behavioural signal alongside the text. That is the move from describing the people to predicting them, which is where the schedule turns next.</p>
+<p>A sentence-transformer embedding is the obvious next try. But a 200-dimension embedding and character style both already fail the group task while nailing the individual one, so the limit looks like the signal and not the encoder: topic and writing habits belong to the person, the role does not. The next question is whether the group becomes predictable only once the text is joined with the behavioural features it was built from.</p>
