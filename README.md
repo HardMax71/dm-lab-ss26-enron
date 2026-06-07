@@ -71,14 +71,52 @@ uv run --with jupyter --with pandas --with pyarrow --with matplotlib \
 
 `eda-5/clean_dataset.py` turns the raw corpus into a deduplicated,
 body-cleaned, thread-aware dataset under `eda-5/clean/`: `messages_clean.parquet`
-(one row per unique message, with the cleaned body and quality flags) and
-`recipients_clean.parquet` (one row per To/Cc delivery). It drops the 51% of
-files that are duplicate copies, strips quoted history from bodies, rebuilds the
-recipient list, and reconstructs conversation threads. `DATASET_CLEANING.md`
-documents every step, the results, and the limitations. Run it with:
+(one row per unique message, with the cleaned body and quality flags),
+`recipients_clean.parquet` (one row per To/Cc delivery), and `people.parquet`
+(one row per mailbox owner with their resolved sending addresses). It drops the
+51% of files that are duplicate copies, strips quoted history from bodies,
+rebuilds the recipient list, reconstructs conversation threads, and resolves
+each sender and recipient address to a mailbox owner where one is known, written
+out as the `sender_person` and `recipient_person` columns. The resolution treats
+the Sent folder as authoritative, recovers the two owners with no usable Sent
+folder (`harris-s`, `stokley-c`) from their surname-matching modal sender, and
+folds the garbled duplicate folder `phanis-s` into the real `panus-s` (both are
+Stephanie Panus's `spanus.pst`). `DATASET_CLEANING.md` documents every step, the
+results, and the limitations. Run it with:
 
 ```
 uv run eda-5/clean_dataset.py
+```
+
+`eda-5/enrich_people.py` adds an external label layer on top of the resolved
+owners: it joins the Shetty-Adibi job-title annotation (vendored under
+`eda-5/refs/`, one row per folder, 1:1 with the 149 owners) and a self-sourced
+Exchange `CN` id parsed from each owner's `X-From` header, writing
+`eda-5/clean/people_roles.parquet` (`display_name`, `title`, `seniority_rank`,
+`is_executive`, `cn_id`, `title_source`). The titles are kept strictly separate
+from the corpus-derived tables and every title column is tagged with its source.
+
+```
+uv run eda-5/enrich_people.py
+```
+
+`eda-6/enron_eda_week5.ipynb` clusters the people behind the 149 mailboxes. It
+builds a twelve-feature behavioural vector per owner (volume, reach, external
+share, thread-opening, tenure, deletion, in/out degree), picks the number of
+groups by silhouette, and reads three roles off a Ward hierarchy: a small
+broadcaster/executive group, an outward-facing dealmaker group, and a large
+internal majority. It pairs the clustering scatter with the dendrogram, a
+cluster-profile heatmap, and cross-tabs against last week's social communities
+(orthogonal) and the external job titles (only weakly aligned with rank: the
+vice-presidents mostly sit in the internal majority), then contrasts a TF-IDF
+content view that deliberately fails to separate the groups, setting up the
+body-to-group prediction the schedule turns to next. `WEEK6_REPORT.md` is the
+written page. Figures land in `eda-6/plots/`:
+
+```
+uv run --with jupyter --with pandas --with pyarrow --with matplotlib \
+  --with seaborn --with scikit-learn --with scipy --with networkx --with plotly \
+  --with "kaleido==0.2.1" --with pillow jupyter lab eda-6/enron_eda_week5.ipynb
 ```
 
 `WHOS_WHO.md` is a short reference for the people who keep appearing in the
@@ -93,7 +131,7 @@ Intended SS26 schedule. Past sessions are ticked.
 | Done | Date    | Topic                                          | Done | Date    | Topic                  |
 |:----:|---------|------------------------------------------------|:----:|---------|------------------------|
 | [x]  | Apr 15  | Kick-off                                       | [x]  | Jun 3   | Descriptive Mining 5   |
-| [x]  | Apr 22  | No class                                       | [ ]  | Jun 10  | Descriptive Mining 6 ? |
+| [x]  | Apr 22  | No class                                       | [x]  | Jun 10  | Descriptive Mining 6   |
 | [x]  | Apr 29  | Data Set Presentation                          | [ ]  | Jun 17  | Predictive Mining 1    |
 | [x]  | May 6   | Data Set Selection / Group Formation / EDA 1   | [ ]  | Jun 24  | Predictive Mining 2    |
 | [x]  | May 13  | Descriptive Mining 2                           | [ ]  | Jul 1   | Predictive Mining 3    |
