@@ -1,5 +1,8 @@
 {
   "n_files": 517401,
+  "merged_duplicate_folders": {
+    "phanis-s": "panus-s"
+  },
   "n_unique": 252022,
   "redundant_copies": 265379,
   "redundancy_pct": 51.29,
@@ -11,11 +14,21 @@
   "sender_identities_merged_by_norm": 11,
   "body_recurring_texts": 210,
   "body_boilerplate_msgs": 2113,
-  "sent_not_by_owner": 4081,
+  "sent_not_by_owner": 4078,
   "bodies_nonascii": 2371,
   "bodies_mojibake": 3,
   "empty_subject_and_body": 320,
   "bigfile_tinybody": 64,
+  "mailbox_owners": 149,
+  "owners_resolved": 149,
+  "owners_recovered_no_sent": [
+    "harris-s",
+    "stokley-c"
+  ],
+  "owners_unresolved": [],
+  "authored_msgs_attributed": 107670,
+  "authored_attributed_pct": 42.7,
+  "owners_ge30_authored": 143,
   "bcc_cc_both_present": 59563,
   "bcc_cc_identical_pct": 100.0,
   "recipient_malformed": 50,
@@ -29,10 +42,10 @@
   "msgs_in_multi_threads": 128445,
   "threads_maybe_overmerged": 0,
   "out_messages_rows": 252022,
-  "out_messages_cols": 37,
+  "out_messages_cols": 38,
   "out_recipients_rows": 1372596,
   "out_messages_mb": 88.1,
-  "out_recipients_mb": 11.2,
+  "out_recipients_mb": 11.4,
   "src_cache_mb": 100.1,
-  "runtime_s": 116.6
+  "runtime_s": 113.7
 }
