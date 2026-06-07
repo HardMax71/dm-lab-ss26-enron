@@ -100,7 +100,7 @@ from the corpus-derived tables and every title column is tagged with its source.
 uv run eda-5/enrich_people.py
 ```
 
-`eda-6/enron_eda_week5.ipynb` clusters the people behind the 149 mailboxes. It
+`eda-5/enron_eda_week5.ipynb` clusters the people behind the 149 mailboxes. It
 builds a twelve-feature behavioural vector per owner (volume, reach, external
 share, thread-opening, tenure, deletion, in/out degree), picks the number of
 groups by silhouette, and reads three roles off a Ward hierarchy: a small
@@ -111,13 +111,14 @@ cluster-profile heatmap, and cross-tabs against last week's social communities
 vice-presidents mostly sit in the internal majority), then contrasts a TF-IDF
 content view that deliberately fails to separate the groups, setting up the
 body-to-group prediction `enron_eda_week6.ipynb` carries out. This is the
-week-five clustering page; its figures live with that report, and running the
-notebook regenerates them under `eda-6/plots/`:
+week-five clustering page; it sits with the rest of the week-five work in
+`eda-5/`, and running the notebook regenerates its `p*` figures under
+`eda-5/plots/`:
 
 ```
 uv run --with jupyter --with pandas --with pyarrow --with matplotlib \
   --with seaborn --with scikit-learn --with scipy --with networkx --with plotly \
-  --with "kaleido==0.2.1" --with pillow jupyter lab eda-6/enron_eda_week5.ipynb
+  --with "kaleido==0.2.1" --with pillow jupyter lab eda-5/enron_eda_week5.ipynb
 ```
 
 `eda-6/enron_eda_week6.ipynb` is the week-six prediction notebook, on the cleaned
