@@ -287,6 +287,27 @@
     alt="Each person's most distinctive words, a topic signature per individual"
   />
 </p>
+<h5>Does behaviour close the gap?</h5>
+<p>
+  If the words miss the group, do the behavioural features recover it? We attached
+  each author's twelve features to every one of their messages and predicted the
+  group for held-out people three ways: text alone, behaviour alone, and both
+  together.
+</p>
+<p>
+  <img
+    style="max-width: 100.0%;height: auto;"
+    src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-6/plots/w6_5_text_plus_behaviour.png"
+    alt="Held-out group accuracy from text, behaviour, and both combined"
+  />
+</p>
+<p>
+  Text alone stays at 59%, below the baseline. Behaviour alone reaches 87%, and the
+  two together 88%. The group is predictable for an unseen person, but from how they
+  communicate, not from what they write - text adds about one point. The behavioural
+  features are the same ones the groups were cut from, so recovering them this way is
+  expected; the result that matters is that the words add almost nothing on top.
+</p>
 <p><strong>Shift of timing - Len</strong></p>
 <p>// TODO</p>
 <p><br /></p>
@@ -309,30 +330,17 @@
 </ul>
 <h4>Open Ends</h4>
 <p>
-  The open question was whether the group becomes predictable once the body text
-  is joined with the behavioural features the groups were built from. We checked it
-  directly: we attached each author's twelve features to every one of their
-  messages and predicted the group for held-out people three ways.
+  Two threads are left open. First, we did not run a sentence-transformer
+  embedding. We expect little from it: a 200-dimension embedding and character
+  style both already name the person while missing the group, which points at the
+  signal rather than the encoder. That stays a guess until it is measured.
 </p>
 <p>
-  <img
-    style="max-width: 100.0%;height: auto;"
-    src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-6/plots/w6_5_text_plus_behaviour.png"
-    alt="Held-out group accuracy from text, behaviour, and both combined"
-  />
-</p>
-<p>
-  Text alone stays at 59%, below the baseline. Behaviour alone reaches 87%, and the
-  two together 88%. So the group is predictable for an unseen person, but from how
-  they communicate, not from what they write - text adds about one point. Since the
-  groups were defined from those features, behaviour recovering them is expected;
-  the point is that the words contribute almost nothing on top.
-</p>
-<p>
-  A sentence-transformer embedding might lift the text bar a little, but a
-  200-dimension embedding and character style both already fail the group task
-  while naming the person, so the limit looks like the signal, not the encoder.
-  Topic and writing habits belong to the person; the behavioural role does not.
-  Predicting that role needs the behavioural signal alongside the text.
+  Second, the group turned out to be little more than a relabelling of behaviour,
+  so predicting it from behaviour is close to circular. The sharper question is a
+  target the behaviour did not define: can the body text predict a person's job
+  title or department, where the words might carry something the behavioural
+  features do not. That would test whether content predicts a real role rather than
+  a behavioural one.
 </p>
 <p><br /></p>
