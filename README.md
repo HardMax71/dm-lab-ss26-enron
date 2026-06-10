@@ -7,8 +7,8 @@ the Data Mining practical course, Summer Semester 2026.
 
 CMU Enron release: https://www.cs.cmu.edu/~enron/. The corpus has about 517k
 message files from 150 mailbox owners. The 423 MB tarball is too large for git
-and ships as an asset on the latest release of this repo. Unpacking gives an
-`./enron_mail/` tree of roughly 2.6 GB.
+and ships as an asset on the `dataset-v1` release of this repo. Unpacking
+gives an `./enron_mail/` tree of roughly 2.6 GB.
 
 After downloading `enron_mail_20150507.tar.gz` into the repo root:
 
@@ -19,7 +19,9 @@ jupyter lab eda-2/enron_eda.ipynb
 ```
 
 The cleaned, deduplicated version of the corpus (the parquet tables built
-under `eda-5/clean/`) is published separately as the `dataset-v2` release.
+under `eda-5/clean/`) is published as the `dataset-v2` release, the current
+latest. Most analysis from week four on only needs those tables, not the raw
+tarball.
 
 ## Layout
 
