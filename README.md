@@ -47,9 +47,12 @@ deletion statistics.
 corpus into the deduplicated, thread-aware tables under `eda-5/clean/`, the
 completeness audit, and the behavioural clustering of the mailbox owners.
 
-`eda-6/` is the week-six prediction work, asking what the message body alone
-gives away about its writer. The person is easy to name and the behavioural
-group is not.
+`pred-1/` is the first predictive-mining session. It stress-tests the week-five
+groups (the eight-person broadcaster core is stable but is not the executives,
+and only two or three features do the separating), and it carries the
+body-text prediction notebook, which asks what the message body alone gives
+away about its writer. The person is easy to name and the behavioural group is
+not.
 
 `WHOS_WHO.md` is a short reference for the people who keep appearing in the
 notebooks: company shape, divisions, executive hierarchy, profiles for the
@@ -63,7 +66,7 @@ Intended SS26 schedule. Past sessions are ticked.
 |:----:|---------|------------------------------------------------|:----:|---------|------------------------|
 | [x]  | Apr 15  | Kick-off                                       | [x]  | Jun 3   | Descriptive Mining 5   |
 | [x]  | Apr 22  | No class                                       | [x]  | Jun 10  | Descriptive Mining 6   |
-| [x]  | Apr 29  | Data Set Presentation                          | [ ]  | Jun 17  | Predictive Mining 1    |
+| [x]  | Apr 29  | Data Set Presentation                          | [x]  | Jun 17  | Predictive Mining 1    |
 | [x]  | May 6   | Data Set Selection / Group Formation / EDA 1   | [ ]  | Jun 24  | Predictive Mining 2    |
 | [x]  | May 13  | Descriptive Mining 2                           | [ ]  | Jul 1   | Predictive Mining 3    |
 | [x]  | May 20  | Descriptive Mining 3                           | [ ]  | Jul 8   | Final Presentation 1   |

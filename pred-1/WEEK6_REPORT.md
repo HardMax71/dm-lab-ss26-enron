@@ -134,7 +134,7 @@
 <p>
   <img
     style="max-width: 100.0%;height: auto;"
-    src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-6/plots/w6_1_group_prediction.png"
+    src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/pred-1/plots/w6_1_group_prediction.png"
     alt="Group prediction beats the baseline on a random split but falls below it on held-out people"
   />
 </p>
@@ -189,7 +189,7 @@
 <p>
   <img
     style="max-width: 100.0%;height: auto;"
-    src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-6/plots/w6_2_person_identification.png"
+    src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/pred-1/plots/w6_2_person_identification.png"
     alt="Author identification sits far above chance for all three representations"
   />
 </p>
@@ -205,7 +205,7 @@
 <p>
   <img
     style="max-width: 100.0%;height: auto;"
-    src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-6/plots/w6_3_content_map.png"
+    src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/pred-1/plots/w6_3_content_map.png"
     alt="People mapped by writing content, with the behavioural groups overlapping"
   />
 </p>
@@ -283,7 +283,7 @@
 <p>
   <img
     style="max-width: 100.0%;height: auto;"
-    src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-6/plots/w6_4_distinctive_words.png"
+    src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/pred-1/plots/w6_4_distinctive_words.png"
     alt="Each person's most distinctive words, a topic signature per individual"
   />
 </p>
@@ -317,7 +317,7 @@
 <p>
   <img
     style="max-width: 100.0%;height: auto;"
-    src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/eda-6/plots/w6_5_text_plus_behaviour.png"
+    src="https://raw.githubusercontent.com/HardMax71/dm-lab-ss26-enron/main/pred-1/plots/w6_5_text_plus_behaviour.png"
     alt="Held-out group accuracy from text, behaviour, and both combined"
   />
 </p>
