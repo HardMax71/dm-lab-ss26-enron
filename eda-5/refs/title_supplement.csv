@@ -7,6 +7,7 @@ hendrickson-s;Trader;1;False;corpus-context;Referred to as the trader on Sitara 
 jones-t;In House Lawyer;2;False;corpus-signature + web;Senior Counsel, ENA. Signs 'Senior Counsel, ENA' 11x, matches legal record and WHOS_WHO
 love-p;Manager;2;False;corpus-mention;Described by a colleague as the Central Risk lead
 mcconnell-m;President;6;True;corpus-mention + web;Mike McConnell, President and CEO of Enron Global Markets. Mailbox also carries some Mark McConnell / Transwestern mail
+merriss-s;Trader;1;False;corpus-mention;Real-time power trader, West (Portland) Short-Term California desk. His own mail says 'I just started in realtime a couple weeks ago' (only 13 messages in the box), corpus notes 'Steve Merriss has joined the Real Time group' and lists him among the traders. Name is Steven J. Merriss (the email steven.merris@ drops an s)
 mims-thurston-p;Trader;1;False;corpus-mention;Patrice Mims-Thurston, trader on the Central Desk
 nemec-g;In House Lawyer;2;False;web + corpus-signature;Senior Counsel, ENA (EDF Trading bio, 1998-2003). Signs 'Attorney' in own mail
 parks-j;Trader;1;False;corpus-context;Sitara status changed 'from Trader to Super User'. Tentative

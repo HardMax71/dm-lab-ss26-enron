@@ -30,9 +30,12 @@ comes from this file is marked with `title_source` in `people_roles.parquet`.
 
 A follow-up layer that fills in the people Shetty-Adibi left blank.
 `enrich_people.py` applies it only to owners whose Shetty-Adibi title is `N/A`,
-so the original annotation is never overwritten. It fills **31 of the 32**
-blanks and leaves only `merriss-s` (Steven Merris, 4 authored messages, no role
-signal anywhere) as `N/A` rather than guess.
+so the original annotation is never overwritten. It fills **all 32** blanks, so
+every one of the 149 owners now has a title. The hardest case, `merriss-s`, has
+only 13 messages in his mailbox because he was a brand-new hire: his own mail
+says "I just started in realtime a couple weeks ago", and the corpus records
+"Steve Merriss has joined the Real Time group", placing him on the West real-time
+power desk.
 
 Each row carries its own `title_source` and a `title_note` with the precise
 title and the evidence. The sources, in order of confidence:
