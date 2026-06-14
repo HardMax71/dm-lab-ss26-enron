@@ -80,7 +80,7 @@ overwrites a vetted value, it lives in its own file, each row's `title_note`
 records what Shetty-Adibi had, and the raw annotation in
 `enron_employeelist.csv` is never edited.
 
-Nine corrections, all backed by the person's own repeated signature plus
+Ten corrections, all backed by the person's own repeated signature plus
 independent third-party mentions:
 
 | owner | Shetty-Adibi | corrected to | evidence |

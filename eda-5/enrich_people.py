@@ -51,6 +51,31 @@ RANK = {
 }
 EXECUTIVE = {"CEO", "President", "Vice President", "Managing Director"}
 
+
+def apply_title_layer(df: pd.DataFrame, path: str, only_na: bool) -> int:
+    """Apply a CSV title layer onto df, returning the number of owners changed.
+
+    The CSV columns are folder;title;seniority_rank;is_executive;title_source;
+    title_note. With only_na=True (the supplement) only owners still marked N/A
+    are filled; with only_na=False (corrections) a vetted title is overridden."""
+    if not os.path.exists(path):
+        return 0
+    layer = pd.read_csv(path, sep=";")
+    changed = 0
+    for _, row in layer.iterrows():
+        mask = df["owner"] == row["folder"]
+        if only_na:
+            mask = mask & (df["title"] == "N/A")
+        if mask.any():
+            df.loc[mask, "title"] = row["title"]
+            df.loc[mask, "seniority_rank"] = int(row["seniority_rank"])
+            df.loc[mask, "is_executive"] = str(row["is_executive"]).strip().lower() == "true"
+            df.loc[mask, "title_source"] = row["title_source"]
+            df.loc[mask, "title_note"] = row["title_note"]
+            changed += 1
+    return changed
+
+
 _FROM = re.compile(rb"^From:\s*(.*)$", re.M)
 _XFROM = re.compile(rb"^X-From:\s*(.*)$", re.M)
 _CN = re.compile(rb"CN=([A-Za-z0-9]+)>?\s*$")
@@ -122,40 +147,13 @@ def main() -> None:
     df["title_note"] = pd.NA
 
     # Layer corpus/web-sourced titles onto owners the external annotation left
-    # N/A. Each row carries its own provenance and the evidence behind it; the
-    # vetted Shetty-Adibi rows are never overwritten. See refs/title_supplement.csv.
-    supp_path = os.path.join(REFS, "title_supplement.csv")
-    filled = 0
-    if os.path.exists(supp_path):
-        supp = pd.read_csv(supp_path, sep=";")
-        for _, row in supp.iterrows():
-            mask = (df["owner"] == row["folder"]) & (df["title"] == "N/A")
-            if mask.any():
-                df.loc[mask, "title"] = row["title"]
-                df.loc[mask, "seniority_rank"] = int(row["seniority_rank"])
-                df.loc[mask, "is_executive"] = str(row["is_executive"]).strip().lower() == "true"
-                df.loc[mask, "title_source"] = row["title_source"]
-                df.loc[mask, "title_note"] = row["title_note"]
-                filled += 1
-
-    # Corrections: where the corpus clearly contradicts the external annotation,
-    # override the title. Unlike the supplement (which only fills N/A), this
-    # overwrites a vetted title, so it is kept in its own file and each row's
-    # title_note records the value Shetty-Adibi had. The raw annotation in
-    # enron_employeelist.csv is left untouched.
-    corr_path = os.path.join(REFS, "title_corrections.csv")
-    corrected = 0
-    if os.path.exists(corr_path):
-        corr = pd.read_csv(corr_path, sep=";")
-        for _, row in corr.iterrows():
-            mask = df["owner"] == row["folder"]
-            if mask.any():
-                df.loc[mask, "title"] = row["title"]
-                df.loc[mask, "seniority_rank"] = int(row["seniority_rank"])
-                df.loc[mask, "is_executive"] = str(row["is_executive"]).strip().lower() == "true"
-                df.loc[mask, "title_source"] = row["title_source"]
-                df.loc[mask, "title_note"] = row["title_note"]
-                corrected += 1
+    # N/A, then apply corrections that override a vetted title. Both go through
+    # apply_title_layer: the supplement only touches N/A rows, corrections
+    # override. Every changed row keeps its own provenance, and the raw
+    # Shetty-Adibi file is never edited. See refs/title_supplement.csv and
+    # refs/title_corrections.csv.
+    filled = apply_title_layer(df, os.path.join(REFS, "title_supplement.csv"), only_na=True)
+    corrected = apply_title_layer(df, os.path.join(REFS, "title_corrections.csv"), only_na=False)
 
     addrs = dict(zip(ppl["owner"], ppl["addresses"].fillna("").str.split(";")))
     surname = dict(zip(ppl["owner"], ppl["surname"]))
