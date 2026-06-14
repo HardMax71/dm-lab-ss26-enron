@@ -133,7 +133,7 @@ def main() -> None:
             if mask.any():
                 df.loc[mask, "title"] = row["title"]
                 df.loc[mask, "seniority_rank"] = int(row["seniority_rank"])
-                df.loc[mask, "is_executive"] = bool(row["is_executive"])
+                df.loc[mask, "is_executive"] = str(row["is_executive"]).strip().lower() == "true"
                 df.loc[mask, "title_source"] = row["title_source"]
                 df.loc[mask, "title_note"] = row["title_note"]
                 filled += 1
