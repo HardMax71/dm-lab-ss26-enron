@@ -6,22 +6,33 @@ prediction notebook it follows from. Both read the cleaned tables under
 
 ## How solid are the behavioural groups?
 
-`pred1_group_certainty.ipynb` stress-tests the week-five clustering before the
-prediction work leans on it. It rebuilds the same twelve-feature Ward
-clustering, then pushes on two soft spots. First, whether the eight-person
-broadcaster/exec group is a group we can actually name: it checks each member's
-silhouette, how often each returns to the broadcaster cluster across six hundred
-80% resamples, and whether the eight survive k-means and deeper Ward cuts. The
-eight-person core is stable (each returns in at least 95% of resamples and the
-eight stay together under every method), but the two CEOs are its least typical
-members, it is not the executive suite, and the boundary is soft, with a
-rotating fringe joining about half the time. Second, which features do the
-separating: an eta-squared per feature shows the split runs on recipients per
-message and broadcast share, while weekend share, thread-opening and deletion
-rate barely move between groups. That also exposes the week-five profile
-heatmap, whose standardisation across three group means flattened every feature
-to about one standard deviation and made the weak ones look as defining as the
-strong ones. Figures land in `pred-1/plots/` (the `pc*` files):
+`pred1_group_certainty.ipynb` corrects the week-five clustering, then
+stress-tests it before the prediction work leans on it. Week five folded two
+assistants' mail into the executives they work for (Rosalee Fleming into
+`lay-k`, Sherri Sera into `skilling-j`), so it was partly clustering offices
+rather than people. This notebook drops those delegate sends (from
+`eda-5/refs/assistant_delegates.csv`) and re-clusters on genuine authorship:
+Ken Lay then keeps only 22 of his 344 messages and falls below the floor, the
+roster goes from 143 to 142, and the broadcaster group tightens from eight to
+six (Liz Taylor's desk moves to the internal majority). The silhouette even
+rises a little, to about 0.20.
+
+It then pushes on two soft spots. First, whether the six-person broadcaster
+group is one we can name: each member's silhouette, how often each returns to
+the cluster across six hundred 80% resamples, and whether the six survive
+k-means and deeper Ward cuts. The six are stable (every one returns in at least
+97% of resamples and they stay together under every method), but only one of
+them, Skilling, is a company executive, and he is the least typical member;
+the rest are operational, legal and trading staff. The softest point is telling:
+the non-member most often pulled in is Liz Taylor's desk, the executive office
+the fix took out. Second, which features do the separating: an eta-squared per
+feature shows the split runs on recipients per message and broadcast share,
+while weekend share, thread-opening and active months barely move between
+groups. That also exposes the profile-heatmap view week five used, whose
+standardisation across three group means flattened every feature to about one
+standard deviation and made the weak ones look as defining as the strong ones.
+Week five itself is left unchanged; this is the corrected re-run. Figures land
+in `pred-1/plots/` (the `pc*` files):
 
 ```
 uv run --with jupyter --with pandas --with pyarrow --with scikit-learn \
