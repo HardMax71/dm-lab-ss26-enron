@@ -51,6 +51,31 @@ RANK = {
 }
 EXECUTIVE = {"CEO", "President", "Vice President", "Managing Director"}
 
+
+def apply_title_layer(df: pd.DataFrame, path: str, only_na: bool) -> int:
+    """Apply a CSV title layer onto df, returning the number of owners changed.
+
+    The CSV columns are folder;title;seniority_rank;is_executive;title_source;
+    title_note. With only_na=True (the supplement) only owners still marked N/A
+    are filled; with only_na=False (corrections) a vetted title is overridden."""
+    if not os.path.exists(path):
+        return 0
+    layer = pd.read_csv(path, sep=";")
+    changed = 0
+    for _, row in layer.iterrows():
+        mask = df["owner"] == row["folder"]
+        if only_na:
+            mask = mask & (df["title"] == "N/A")
+        if mask.any():
+            df.loc[mask, "title"] = row["title"]
+            df.loc[mask, "seniority_rank"] = int(row["seniority_rank"])
+            df.loc[mask, "is_executive"] = str(row["is_executive"]).strip().lower() == "true"
+            df.loc[mask, "title_source"] = row["title_source"]
+            df.loc[mask, "title_note"] = row["title_note"]
+            changed += 1
+    return changed
+
+
 _FROM = re.compile(rb"^From:\s*(.*)$", re.M)
 _XFROM = re.compile(rb"^X-From:\s*(.*)$", re.M)
 _CN = re.compile(rb"CN=([A-Za-z0-9]+)>?\s*$")
@@ -119,23 +144,40 @@ def main() -> None:
     df["seniority_rank"] = df["title"].map(RANK).astype("Int64")
     df["is_executive"] = df["title"].isin(EXECUTIVE)
     df["title_source"] = TITLE_SOURCE
+    df["title_note"] = pd.NA
+
+    # Layer corpus/web-sourced titles onto owners the external annotation left
+    # N/A, then apply corrections that override a vetted title. Both go through
+    # apply_title_layer: the supplement only touches N/A rows, corrections
+    # override. Every changed row keeps its own provenance, and the raw
+    # Shetty-Adibi file is never edited. See refs/title_supplement.csv and
+    # refs/title_corrections.csv.
+    filled = apply_title_layer(df, os.path.join(REFS, "title_supplement.csv"), only_na=True)
+    corrected = apply_title_layer(df, os.path.join(REFS, "title_corrections.csv"), only_na=False)
 
     addrs = dict(zip(ppl["owner"], ppl["addresses"].fillna("").str.split(";")))
     surname = dict(zip(ppl["owner"], ppl["surname"]))
+    prior_path = os.path.join(CLEAN, "people_roles.parquet")
     if os.path.isdir(MAILDIR):
         df["cn_id"] = [cn_for_owner(o, addrs.get(o, []), surname.get(o, ""))
                        for o in df["owner"]]
+    elif os.path.exists(prior_path):
+        prior = pd.read_parquet(prior_path)[["owner", "cn_id"]]
+        df = df.merge(prior, on="owner", how="left")
+        print("  note: enron_mail/ not found, reused cn_id from existing people_roles.parquet")
     else:
         print("  note: enron_mail/ not found, leaving cn_id null")
         df["cn_id"] = None
 
     out = df[["owner", "display_name", "first_name", "last_name", "cn_id",
-              "title", "seniority_rank", "is_executive", "title_source"]]
+              "title", "seniority_rank", "is_executive", "title_source", "title_note"]]
     path = os.path.join(CLEAN, "people_roles.parquet")
     out.to_parquet(path, compression="zstd", index=False)
 
     print(f"  people_roles.parquet  {len(out)} owners")
     print(f"  titles known (not N/A): {(out['title'] != 'N/A').sum()}")
+    print(f"  filled from title_supplement.csv: {filled}")
+    print(f"  corrected from title_corrections.csv: {corrected}")
     print(f"  executives (CEO/Pres/VP/MD): {int(out['is_executive'].sum())}")
     print(f"  cn_id resolved: {out['cn_id'].notna().sum()} / {len(out)}")
     print("\n  title distribution:")
