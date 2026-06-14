@@ -1,0 +1,33 @@
+folder;title;seniority_rank;is_executive;title_source;title_note
+bailey-s;Employee;1;False;corpus-signature;Senior Legal Specialist. Signs it 20x in own sent mail
+gang-l;Employee;1;False;corpus-mention;Enron scheduler (ISO scheduling and forecasting), colleagues call her 'our scheduler'
+hain-m;In House Lawyer;2;False;corpus-signature;Senior Regulatory Counsel. Signs it 3x in own sent mail
+heard-m;Employee;1;False;corpus-signature;Senior Legal Specialist. Signs it 117x in own sent mail
+hendrickson-s;Trader;1;False;corpus-context;Referred to as the trader on Sitara deals, West gas desk. Tentative
+jones-t;In House Lawyer;2;False;corpus-signature + web;Senior Counsel, ENA. Signs 'Senior Counsel, ENA' 11x, matches legal record and WHOS_WHO
+love-p;Manager;2;False;corpus-mention;Described by a colleague as the Central Risk lead
+mcconnell-m;President;6;True;corpus-mention + web;Mike McConnell, President and CEO of Enron Global Markets. Mailbox also carries some Mark McConnell / Transwestern mail
+merriss-s;Trader;1;False;corpus-mention;Real-time power trader, West (Portland) Short-Term California desk. His own mail says 'I just started in realtime a couple weeks ago' (only 13 messages in the box), corpus notes 'Steve Merriss has joined the Real Time group' and lists him among the traders. Name is Steven J. Merriss (the email steven.merris@ drops an s)
+mims-thurston-p;Trader;1;False;corpus-mention;Patrice Mims-Thurston, trader on the Central Desk
+nemec-g;In House Lawyer;2;False;web + corpus-signature;Senior Counsel, ENA (EDF Trading bio, 1998-2003). Signs 'Attorney' in own mail
+parks-j;Trader;1;False;corpus-context;Sitara status changed 'from Trader to Super User'. Tentative
+pimenov-v;Trader;1;False;corpus-context;Referred to as a trader or risk contact on deals. Weak single mention, tentative
+rapp-b;In House Lawyer;2;False;corpus-mention;ETS attorney, joined ETS legal for Transwestern and NNG
+ring-a;Trader;1;False;corpus-context;Gas desk, self-notes 'more origination experience than trading'. Tentative
+rodrique-r;Employee;1;False;corpus-mention;Internal directory entry lists Title: Analyst
+sanchez-m;Employee;1;False;corpus-context;Associate in the analyst / mid-rotation program, commercial support
+schoolcraft-d;Manager;2;False;corpus-mention + web;Gas Control (ETS), Transwestern pipeline group, manager/director level
+scott-s;In House Lawyer;2;False;corpus-mention;Described as senior attorney / legal counsel for the pipeline group (TW). Some mail also notes risk/scheduling and the mailbox carries m.scott@ too
+shackleton-s;In House Lawyer;2;False;corpus-signature;Senior Counsel, ENA. Signs 'Senior Counsel' 17x, ENA legal hub in WHOS_WHO
+smith-m;Trader;1;False;corpus-mention;Associate/analyst on West Gas Trading, signs 'Associate, West Gas Trading'
+south-s;Trader;1;False;corpus-mention;Trader on the West Desk, senior level. One org list shows Director
+stokley-c;Manager;2;False;corpus-mention;Staff repeatedly refer to 'my manager, Chris Stokley', Portland/West power
+thomas-p;Trader;1;False;corpus-context;NETCO book transfers reference him as a trader. Common name, tentative
+ward-k;Manager;2;False;corpus-signature;Manager, West Gas Origination. Signs it 22x in own sent mail
+watson-k;Director;3;False;corpus-signature + web;Director, Transwestern Commercial. Self-IDs by name, Pipeline and Gas Journal bio
+weldon-c;Employee;1;False;corpus-context;Gas Structuring / LNG fundamentals, supervisor Ed McMichael
+whalley-l;Employee;1;False;corpus-signature;Administrative assistant to Greg Whalley (President and COO). Mailbox sends as liz.taylor@enron.com and signs for him. The real Whalley is owner whalley-g
+white-s;Director;3;False;corpus-signature;Signs 'Director, Power Risk Management', others call her their power-risk director
+whitt-m;Vice President;5;True;corpus-signature;Signs 'Vice President' (Denver gas office). Some mail also lists him as Director or trader
+williams-w3;Manager;2;False;corpus-signature;Manager, Short-Term West Hourly Trading. Signs it in own sent mail
+wolfe-j;Trader;1;False;corpus-signature;Trading Analyst, West Desk. Signs 'Trading Analyst' 8x

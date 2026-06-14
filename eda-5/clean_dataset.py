@@ -456,6 +456,12 @@ def main() -> None:
 
     # Sent mail whose from-address does not contain the mailbox owner's surname:
     # assistants sending on an executive's behalf, or shared role mailboxes.
+    # This is a coarse flag keyed on the folder surname, so it both catches
+    # genuine delegate sends and, as a false positive, owners whose e-mail name
+    # differs from their folder label (carol.clair@ for stclair-c). The two
+    # mailboxes where an assistant's mail is actually folded into the owner's
+    # identity (Rosalee Fleming -> lay-k, Sherri Sera -> skilling-j) are listed
+    # precisely in refs/assistant_delegates.csv.
     surname = canon["user"].str.split("-").str[0]
     fa_local = canon["from_addr_norm"].fillna("").str.split("@").str[0]
     owner_in_addr = np.array(
