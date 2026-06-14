@@ -25,13 +25,18 @@ k-means and deeper Ward cuts. The six are stable (every one returns in at least
 them, Skilling, is a company executive, and he is the least typical member;
 the rest are operational, legal and trading staff. The softest point is telling:
 the non-member most often pulled in is Liz Taylor's desk, the executive office
-the fix took out. Second, which features do the separating: an eta-squared per
-feature shows the split runs on recipients per message and broadcast share,
-while weekend share, thread-opening and active months barely move between
-groups. That also exposes the profile-heatmap view week five used, whose
-standardisation across three group means flattened every feature to about one
-standard deviation and made the weak ones look as defining as the strong ones.
-Week five itself is left unchanged; this is the corrected re-run. Figures land
+the fix took out. Second, which features do the separating. It reproduces the
+week-five profile heatmap (each group's mean feature value in standard
+deviations from the three-group mean) and digs into the cells that fall within
+0.1 of the mean: only two do, the broadcasters on tenure and the internal
+majority on thread-opening, where a group sits at the midpoint. The heatmap is
+a trap, though, because standardising over three group means flattens every
+feature to about one standard deviation (weekend share reads minus 1.15 for the
+broadcasters yet only minus 0.23 against the population). An eta-squared per
+feature keeps the within-group spread and shows the truth: the split runs on
+recipients per message and broadcast share, while weekend share, thread-opening
+and active months barely move. Week five itself is left unchanged; this is the
+corrected re-run. Figures land
 in `pred-1/plots/` (the `pc*` files):
 
 ```
