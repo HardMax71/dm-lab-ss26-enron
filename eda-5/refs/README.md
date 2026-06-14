@@ -94,6 +94,7 @@ independent third-party mentions:
 | `lokay-m` | Employee | Director | "Account Director, Transwestern Commercial" 37x |
 | `forney-j` | Manager | Director | "Director, ERCOT / East Power Trading" |
 | `baughman-d` | Trader | Manager | "Commercial Manager, Enron Power Marketing" |
+| `beck-s` | Employee | Managing Director | MD Global Risk Management Ops, named COO of Enron Net Works |
 
 These are corrections the corpus makes unavoidable (Jeff Dasovich and Mark
 Taylor both sign as Vice President dozens of times, yet were annotated
@@ -101,3 +102,11 @@ Taylor both sign as Vice President dozens of times, yet were annotated
 mismatches were rejected as noise, such as a confidentiality disclaimer matching
 "counsel", an assistant's title bleeding into their manager's mailbox, or
 "Vice President Al Gore" appearing in a quote in Skilling's mail.
+
+The file also carries two rows that leave the title unchanged but add a note,
+flagging a mailbox that is run by an executive's assistant rather than the
+executive. An identity sweep (dominant sender address versus the owner's
+surname) found that `lay-k` is 94% `rosalee.fleming@` (Ken Lay's assistant) and
+`skilling-j` is 79% `sherri.sera@` (Jeff Skilling's assistant), the same pattern
+as `whalley-l` being Liz Taylor. The titles stay CEO, since the mailboxes belong
+to Lay and Skilling, but their sent-mail behaviour is largely the assistant's.

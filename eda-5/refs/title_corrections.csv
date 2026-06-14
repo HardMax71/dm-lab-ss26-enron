@@ -8,3 +8,6 @@ lokay-m;Director;3;False;corpus-correction;Shetty-Adibi had Employee. Signs 'Acc
 forney-j;Director;3;False;corpus-correction;Shetty-Adibi had Manager. Signs 'Director, ERCOT Trading', also seen as 'Director, East Power Trading' (earlier mail shows Manager)
 baughman-d;Manager;2;False;corpus-correction;Shetty-Adibi had Trader. Signs 'Commercial Manager, Enron Power Marketing' 4x
 mann-k;In House Lawyer;2;False;corpus-correction;Shetty-Adibi had Employee. Signs 'Senior Counsel, Enron North America'
+beck-s;Managing Director;4;True;corpus-correction;Shetty-Adibi had Employee. Managing Director of Global Risk Management Operations, named COO of Enron Net Works (signs 'Chief Operating Officer' 8x, colleagues confirm)
+lay-k;CEO;7;True;shetty-adibi-2004 (ahr85/enron mirror);Title unchanged. Note: the mailbox's sent mail is ~94% from rosalee.fleming@, Ken Lay's executive assistant, who ran the account
+skilling-j;CEO;7;True;shetty-adibi-2004 (ahr85/enron mirror);Title unchanged. Note: the mailbox's sent mail is ~79% from sherri.sera@, Jeff Skilling's executive assistant, who ran the account
