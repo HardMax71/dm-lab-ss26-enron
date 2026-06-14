@@ -22,7 +22,7 @@ jupyter lab eda-2/enron_eda.ipynb
 
 The cleaned, deduplicated version of the corpus (the parquet tables built
 under `eda-5/clean/`) is published as the
-[`dataset-v2`](https://github.com/HardMax71/dm-lab-ss26-enron/releases/tag/dataset-v2)
+[`dataset-v3`](https://github.com/HardMax71/dm-lab-ss26-enron/releases/tag/dataset-v3)
 release, the current latest. Most analysis from week four on only needs those
 tables, not the raw tarball.
 
