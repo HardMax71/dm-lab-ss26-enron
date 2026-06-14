@@ -110,3 +110,39 @@ surname) found that `lay-k` is 94% `rosalee.fleming@` (Ken Lay's assistant) and
 `skilling-j` is 79% `sherri.sera@` (Jeff Skilling's assistant), the same pattern
 as `whalley-l` being Liz Taylor. The titles stay CEO, since the mailboxes belong
 to Lay and Skilling, but their sent-mail behaviour is largely the assistant's.
+
+## `assistant_delegates.csv`
+
+The two mailboxes above are a known attribution problem: the cleaning resolves
+each sender address to a mailbox owner, and one of its rules claims any address
+that makes up at least half an owner's Sent folder. That rule is meant to catch
+an owner whose e-mail name differs from their folder label (`carol.clair@` for
+`stclair-c`, `robin.rodrigue@` for `rodrique-r`), but it also folds an
+assistant's own address into the executive's identity. So 322 messages Rosalee
+Fleming sent are attributed to Ken Lay, and 252 Sherri Sera sent are attributed
+to Jeff Skilling: 574 of the 107,670 attributed messages, all in these two
+mailboxes.
+
+This file records the two assistant-to-executive pairs explicitly, so a
+delegate send can be told from a genuine one. To split a person's real authorship
+from their office's outgoing mail, drop the rows whose `from_addr_norm` is a
+listed `assistant_addr`:
+
+```python
+deleg = pd.read_csv("eda-5/refs/assistant_delegates.csv", sep=";")
+own = msg[~msg["from_addr_norm"].isin(set(deleg["assistant_addr"]))]
+```
+
+A note on the fix. Re-attributing the 574 messages is a judgement call rather
+than a clear bug fix, because it changes who is in the analysis. Skilling keeps
+66 self-sent messages and stays above the 30-message floor, but Lay keeps only
+22 and would drop out of the 143 profiled people, and three of the week-five
+broadcasters (`lay-k`, `skilling-j`, plus `whalley-l`) are really executive
+offices run by assistants. The registry makes the choice available without
+forcing it; the resolution itself is left as is so the profiled roster does not
+silently change.
+
+`whalley-l` is the inverse case and needs no fix: the folder is named after Greg
+Whalley but its owner resolved to his assistant Liz Taylor, who sends from her
+own `liz.taylor@` address, so her mail is correctly hers (the real Greg Whalley
+is the separate owner `whalley-g`).
