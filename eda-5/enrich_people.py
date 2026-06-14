@@ -119,23 +119,47 @@ def main() -> None:
     df["seniority_rank"] = df["title"].map(RANK).astype("Int64")
     df["is_executive"] = df["title"].isin(EXECUTIVE)
     df["title_source"] = TITLE_SOURCE
+    df["title_note"] = pd.NA
+
+    # Layer corpus/web-sourced titles onto owners the external annotation left
+    # N/A. Each row carries its own provenance and the evidence behind it; the
+    # vetted Shetty-Adibi rows are never overwritten. See refs/title_supplement.csv.
+    supp_path = os.path.join(REFS, "title_supplement.csv")
+    filled = 0
+    if os.path.exists(supp_path):
+        supp = pd.read_csv(supp_path, sep=";")
+        for _, row in supp.iterrows():
+            mask = (df["owner"] == row["folder"]) & (df["title"] == "N/A")
+            if mask.any():
+                df.loc[mask, "title"] = row["title"]
+                df.loc[mask, "seniority_rank"] = int(row["seniority_rank"])
+                df.loc[mask, "is_executive"] = bool(row["is_executive"])
+                df.loc[mask, "title_source"] = row["title_source"]
+                df.loc[mask, "title_note"] = row["title_note"]
+                filled += 1
 
     addrs = dict(zip(ppl["owner"], ppl["addresses"].fillna("").str.split(";")))
     surname = dict(zip(ppl["owner"], ppl["surname"]))
+    prior_path = os.path.join(CLEAN, "people_roles.parquet")
     if os.path.isdir(MAILDIR):
         df["cn_id"] = [cn_for_owner(o, addrs.get(o, []), surname.get(o, ""))
                        for o in df["owner"]]
+    elif os.path.exists(prior_path):
+        prior = pd.read_parquet(prior_path)[["owner", "cn_id"]]
+        df = df.merge(prior, on="owner", how="left")
+        print("  note: enron_mail/ not found, reused cn_id from existing people_roles.parquet")
     else:
         print("  note: enron_mail/ not found, leaving cn_id null")
         df["cn_id"] = None
 
     out = df[["owner", "display_name", "first_name", "last_name", "cn_id",
-              "title", "seniority_rank", "is_executive", "title_source"]]
+              "title", "seniority_rank", "is_executive", "title_source", "title_note"]]
     path = os.path.join(CLEAN, "people_roles.parquet")
     out.to_parquet(path, compression="zstd", index=False)
 
     print(f"  people_roles.parquet  {len(out)} owners")
     print(f"  titles known (not N/A): {(out['title'] != 'N/A').sum()}")
+    print(f"  filled from title_supplement.csv: {filled}")
     print(f"  executives (CEO/Pres/VP/MD): {int(out['is_executive'].sum())}")
     print(f"  cn_id resolved: {out['cn_id'].notna().sum()} / {len(out)}")
     print("\n  title distribution:")

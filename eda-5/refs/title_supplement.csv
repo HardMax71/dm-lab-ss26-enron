@@ -1,0 +1,12 @@
+folder;title;seniority_rank;is_executive;title_source;title_note
+jones-t;In House Lawyer;2;False;corpus-signature + web;Senior Counsel, ENA. Signs 'Senior Counsel, ENA' 11x in own sent mail, matches legal record and WHOS_WHO
+shackleton-s;In House Lawyer;2;False;corpus-signature;Senior Counsel, ENA. Signs 'Senior Counsel' 17x, ENA legal hub in WHOS_WHO
+nemec-g;In House Lawyer;2;False;web + corpus-signature;Senior Counsel, ENA (EDF Trading bio, 1998-2003). Signs 'Attorney' in own mail
+hain-m;In House Lawyer;2;False;corpus-signature;Senior Regulatory Counsel. Signs it 3x in own sent mail
+heard-m;Employee;1;False;corpus-signature;Senior Legal Specialist. Signs it 117x in own sent mail
+bailey-s;Employee;1;False;corpus-signature;Senior Legal Specialist. Signs it 20x in own sent mail
+ward-k;Manager;2;False;corpus-signature;Manager, West Gas Origination. Signs it 22x in own sent mail
+watson-k;Director;3;False;corpus-signature + web;Director, Transwestern Commercial. Self-IDs by name, Pipeline and Gas Journal bio
+wolfe-j;Trader;1;False;corpus-signature;Trading Analyst, West Desk. Signs 'Trading Analyst' 8x
+williams-w3;Manager;2;False;corpus-signature;Manager, Short-Term West Hourly Trading. Signs it in own sent mail
+whalley-l;Employee;1;False;corpus-signature;Administrative assistant to Greg Whalley (President and COO). Mailbox sends as liz.taylor@enron.com and signs for him. The real Whalley is owner whalley-g
