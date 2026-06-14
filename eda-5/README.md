@@ -38,9 +38,10 @@ uv run eda-5/enrich_people.py
 ```
 
 The resulting tables also ship as the
-[`dataset-v2`](https://github.com/HardMax71/dm-lab-ss26-enron/releases/tag/dataset-v2)
+[`dataset-v3`](https://github.com/HardMax71/dm-lab-ss26-enron/releases/tag/dataset-v3)
 release of this repo, with the timestamp column stripped there because of the
-timezone encoding fault described in the week-5 report.
+timezone encoding fault described in the week-5 report, and with the completed,
+corrected job-title layer.
 
 ## The week-four notebook
 
