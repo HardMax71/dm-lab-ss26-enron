@@ -70,3 +70,34 @@ Two rows are identity findings as much as titles:
   and CEO of Enron Global Markets, though the mailbox also carries some mail
   from a Mark McConnell on the Transwestern desk. The display name still reads
   "Mark McConnell" from the original annotation.
+
+## `title_corrections.csv`
+
+A handful of owners carry a Shetty-Adibi title that the corpus flatly
+contradicts. `enrich_people.py` applies this file last, overriding the title for
+the listed owners (unlike the supplement, which only fills `N/A`). Because it
+overwrites a vetted value, it lives in its own file, each row's `title_note`
+records what Shetty-Adibi had, and the raw annotation in
+`enron_employeelist.csv` is never edited.
+
+Nine corrections, all backed by the person's own repeated signature plus
+independent third-party mentions:
+
+| owner | Shetty-Adibi | corrected to | evidence |
+|---|---|---|---|
+| `dasovich-j` | Employee | Vice President | signs "Vice President, Business Development" 40x |
+| `taylor-m` | Employee | Vice President | signs "Vice President and General Counsel" 87x |
+| `kaminski-v` | Manager | Managing Director | "Managing Director, Research" (head of Research) |
+| `derrick-j` | In House Lawyer | Vice President | Executive VP and General Counsel, Enron Corp |
+| `cash-m` | Employee | In House Lawyer | Assistant General Counsel, ENA |
+| `mann-k` | Employee | In House Lawyer | Senior Counsel, ENA |
+| `lokay-m` | Employee | Director | "Account Director, Transwestern Commercial" 37x |
+| `forney-j` | Manager | Director | "Director, ERCOT / East Power Trading" |
+| `baughman-d` | Trader | Manager | "Commercial Manager, Enron Power Marketing" |
+
+These are corrections the corpus makes unavoidable (Jeff Dasovich and Mark
+Taylor both sign as Vice President dozens of times, yet were annotated
+"Employee"). The reconciliation was deliberately conservative: many apparent
+mismatches were rejected as noise, such as a confidentiality disclaimer matching
+"counsel", an assistant's title bleeding into their manager's mailbox, or
+"Vice President Al Gore" appearing in a quote in Skilling's mail.

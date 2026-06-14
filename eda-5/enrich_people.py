@@ -138,6 +138,25 @@ def main() -> None:
                 df.loc[mask, "title_note"] = row["title_note"]
                 filled += 1
 
+    # Corrections: where the corpus clearly contradicts the external annotation,
+    # override the title. Unlike the supplement (which only fills N/A), this
+    # overwrites a vetted title, so it is kept in its own file and each row's
+    # title_note records the value Shetty-Adibi had. The raw annotation in
+    # enron_employeelist.csv is left untouched.
+    corr_path = os.path.join(REFS, "title_corrections.csv")
+    corrected = 0
+    if os.path.exists(corr_path):
+        corr = pd.read_csv(corr_path, sep=";")
+        for _, row in corr.iterrows():
+            mask = df["owner"] == row["folder"]
+            if mask.any():
+                df.loc[mask, "title"] = row["title"]
+                df.loc[mask, "seniority_rank"] = int(row["seniority_rank"])
+                df.loc[mask, "is_executive"] = str(row["is_executive"]).strip().lower() == "true"
+                df.loc[mask, "title_source"] = row["title_source"]
+                df.loc[mask, "title_note"] = row["title_note"]
+                corrected += 1
+
     addrs = dict(zip(ppl["owner"], ppl["addresses"].fillna("").str.split(";")))
     surname = dict(zip(ppl["owner"], ppl["surname"]))
     prior_path = os.path.join(CLEAN, "people_roles.parquet")
@@ -160,6 +179,7 @@ def main() -> None:
     print(f"  people_roles.parquet  {len(out)} owners")
     print(f"  titles known (not N/A): {(out['title'] != 'N/A').sum()}")
     print(f"  filled from title_supplement.csv: {filled}")
+    print(f"  corrected from title_corrections.csv: {corrected}")
     print(f"  executives (CEO/Pres/VP/MD): {int(out['is_executive'].sum())}")
     print(f"  cn_id resolved: {out['cn_id'].notna().sum()} / {len(out)}")
     print("\n  title distribution:")

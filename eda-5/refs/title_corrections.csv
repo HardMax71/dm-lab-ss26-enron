@@ -1,0 +1,10 @@
+folder;title;seniority_rank;is_executive;title_source;title_note
+dasovich-j;Vice President;5;True;corpus-correction;Shetty-Adibi had Employee. Signs 'Vice President, Business Development' (EES) 40x in own mail
+taylor-m;Vice President;5;True;corpus-correction;Shetty-Adibi had Employee. Signs 'Vice President and General Counsel, Enron Wholesale' 87x, confirmed by colleagues
+kaminski-v;Managing Director;4;True;corpus-correction;Shetty-Adibi had Manager. Signs 'Managing Director - Research' (20x in third-party mentions), head of Research
+derrick-j;Vice President;5;True;corpus-correction;Shetty-Adibi had In House Lawyer. Executive VP and General Counsel of Enron Corp, mapped to the VP exec tier
+cash-m;In House Lawyer;2;False;corpus-correction;Shetty-Adibi had Employee. Assistant General Counsel / Senior Counsel ENA, the employment lawyer
+lokay-m;Director;3;False;corpus-correction;Shetty-Adibi had Employee. Signs 'Account Director, Transwestern Commercial Group' 37x
+forney-j;Director;3;False;corpus-correction;Shetty-Adibi had Manager. Signs 'Director, ERCOT Trading', also seen as 'Director, East Power Trading' (earlier mail shows Manager)
+baughman-d;Manager;2;False;corpus-correction;Shetty-Adibi had Trader. Signs 'Commercial Manager, Enron Power Marketing' 4x
+mann-k;In House Lawyer;2;False;corpus-correction;Shetty-Adibi had Employee. Signs 'Senior Counsel, Enron North America'
