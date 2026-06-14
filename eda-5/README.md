@@ -72,7 +72,7 @@ cluster-profile heatmap, and cross-tabs against the week-four social
 communities (orthogonal) and the external job titles (only weakly aligned with
 rank: the vice-presidents mostly sit in the internal majority), then contrasts
 a TF-IDF content view that deliberately fails to separate the groups, setting
-up the body-to-group prediction `eda-6/enron_eda_week6.ipynb` carries out.
+up the body-to-group prediction `pred-1/enron_eda_week6.ipynb` carries out.
 Running the notebook regenerates its `p*` figures under `eda-5/plots/`:
 
 ```
