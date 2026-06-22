@@ -91,8 +91,17 @@ The pipeline is four steps:
 - **Asks and decisions.** Almost three quarters of threads carry a request, so
   the corpus is a working inbox; decisions are rarer and concentrate in the
   operational categories.
+- **The arc of the collapse.** Tracking the category mix month by month traces
+  the company: deal-making shrinks from 2000 while internal-admin and social mail
+  climb, the lines crossing around the December 2001 bankruptcy.
+- **Enron's world, extracted.** The 33,078 named entities are led by the
+  regulators (FERC, CPUC), the counterparties (Dynegy, PG&E, El Paso), and Enron's
+  own desks and systems (ENA, EnronOnline, EPMI, Sitara).
+- **Content predicts rank.** The mix of categories a person takes part in places
+  an executive at AUC 0.73 on its own (metadata managed 0.80), leaning toward
+  legal and reporting and away from the trading desk.
 
 ```
-uv run --with jupyter --with pandas --with pyarrow --with plotly \
+uv run --with jupyter --with pandas --with pyarrow --with scikit-learn --with plotly \
   --with "kaleido==0.2.1" --with pillow jupyter lab pred-2/pred2_thread_mining.ipynb
 ```
