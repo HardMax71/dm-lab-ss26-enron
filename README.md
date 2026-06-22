@@ -21,8 +21,9 @@ jupyter lab eda-2/enron_eda.ipynb
 ```
 
 The cleaned, deduplicated version of the corpus (the parquet tables built
-under `eda-5/clean/`) is published as the
-[`dataset-v3`](https://github.com/HardMax71/dm-lab-ss26-enron/releases/tag/dataset-v3)
+under `eda-5/clean/`), now alongside the pred-2 thread annotations, is published
+as the
+[`dataset-v4`](https://github.com/HardMax71/dm-lab-ss26-enron/releases/tag/dataset-v4)
 release, the current latest. Most analysis from week four on only needs those
 tables, not the raw tarball.
 
@@ -53,6 +54,18 @@ and only two or three features do the separating), and it carries the
 body-text prediction notebook, which asks what the message body alone gives
 away about its writer. The person is easy to name and the behavioural group is
 not.
+
+`pred-2/` is the second predictive-mining session, in two parts. It corrects the
+pred-1 group prediction, which was circular because the groups were clustered
+from the same twelve features, by predicting an external label the pipeline
+never saw, the Shetty-Adibi job titles: executive status reaches AUC 0.80 and
+seniority a cross-validated Spearman of 0.47, both well clear of a permutation
+null. It then turns all 21,803 genuine conversation threads into one structured
+table with an LLM annotator, each row checked against a schema, and mines the
+result: the corpus is a working inbox, executives concentrate in the crisis and
+the law, the category mix traces the collapse from 2000 to 2002, and what a
+person discusses predicts their rank almost as well as how they email. The
+annotation layer ships in the `dataset-v4` release.
 
 `WHOS_WHO.md` is a short reference for the people who keep appearing in the
 notebooks: company shape, divisions, executive hierarchy, profiles for the
