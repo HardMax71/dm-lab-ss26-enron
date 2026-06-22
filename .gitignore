@@ -35,3 +35,6 @@ Thumbs.db
 *.synctex.gz
 *.fdb_latexmk
 *.fls
+
+# --- pred-2 annotation build intermediates (reproducible via build_threads.py) ---
+pred-2/work/
