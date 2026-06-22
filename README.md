@@ -67,7 +67,7 @@ Intended SS26 schedule. Past sessions are ticked.
 | [x]  | Apr 15  | Kick-off                                       | [x]  | Jun 3   | Descriptive Mining 5   |
 | [x]  | Apr 22  | No class                                       | [x]  | Jun 10  | Descriptive Mining 6   |
 | [x]  | Apr 29  | Data Set Presentation                          | [x]  | Jun 17  | Predictive Mining 1    |
-| [x]  | May 6   | Data Set Selection / Group Formation / EDA 1   | [ ]  | Jun 24  | Predictive Mining 2    |
+| [x]  | May 6   | Data Set Selection / Group Formation / EDA 1   | [x]  | Jun 24  | Predictive Mining 2    |
 | [x]  | May 13  | Descriptive Mining 2                           | [ ]  | Jul 1   | Predictive Mining 3    |
 | [x]  | May 20  | Descriptive Mining 3                           | [ ]  | Jul 8   | Final Presentation 1   |
 | [x]  | May 27  | Descriptive Mining 4                           | [ ]  | Jul 15  | Final Presentation 2   |
