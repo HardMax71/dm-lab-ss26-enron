@@ -67,6 +67,16 @@ the law, the category mix traces the collapse from 2000 to 2002, and what a
 person discusses predicts their rank almost as well as how they email. The
 annotation layer ships in the `dataset-v4` release.
 
+`pred-3/` joins those two windows. pred-2 read rank twice, once from how a
+person emails and once from what they discuss, and the third session asks whether
+the two are the same signal or different ones. Fused on a common set of 135
+people, they lift executive prediction from about 0.79 to 0.83 AUC, a gain that
+survives shuffling the content block (the content the metadata misses is who
+sits in the threads that decide and oversee). For the fine seniority ladder,
+though, metadata already saturates the signal and content adds nothing, so the
+fused model recovers the middle of the hierarchy and still compresses the very
+top.
+
 `WHOS_WHO.md` is a short reference for the people who keep appearing in the
 notebooks: company shape, divisions, executive hierarchy, profiles for the
 named mailbox owners, and a collapse timeline.
@@ -81,6 +91,6 @@ Intended SS26 schedule. Past sessions are ticked.
 | [x]  | Apr 22  | No class                                       | [x]  | Jun 10  | Descriptive Mining 6   |
 | [x]  | Apr 29  | Data Set Presentation                          | [x]  | Jun 17  | Predictive Mining 1    |
 | [x]  | May 6   | Data Set Selection / Group Formation / EDA 1   | [x]  | Jun 24  | Predictive Mining 2    |
-| [x]  | May 13  | Descriptive Mining 2                           | [ ]  | Jul 1   | Predictive Mining 3    |
+| [x]  | May 13  | Descriptive Mining 2                           | [x]  | Jul 1   | Predictive Mining 3    |
 | [x]  | May 20  | Descriptive Mining 3                           | [ ]  | Jul 8   | Final Presentation 1   |
 | [x]  | May 27  | Descriptive Mining 4                           | [ ]  | Jul 15  | Final Presentation 2   |
