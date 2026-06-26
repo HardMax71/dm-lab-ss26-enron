@@ -38,3 +38,6 @@ Thumbs.db
 
 # --- pred-2 annotation build intermediates (reproducible via build_threads.py) ---
 pred-2/work/
+
+# --- pred-3 authorship score cache (recomputed by the notebook if absent) ---
+pred-3/work/

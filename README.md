@@ -75,7 +75,11 @@ survives shuffling the content block (the content the metadata misses is who
 sits in the threads that decide and oversee). For the fine seniority ladder,
 though, metadata already saturates the signal and content adds nothing, so the
 fused model recovers the middle of the hierarchy and still compresses the very
-top.
+top. A companion notebook turns the same two-window fusion on identity, naming
+the author of a single message: word and character n-grams name the writer about
+two times in three out of 110 candidates, the send-envelope adds a small but real
+lift on top, and the few mistakes fall on the colleagues a person actually
+emails.
 
 `WHOS_WHO.md` is a short reference for the people who keep appearing in the
 notebooks: company shape, divisions, executive hierarchy, profiles for the
