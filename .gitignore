@@ -41,3 +41,6 @@ pred-2/work/
 
 # --- pred-3 authorship score cache (recomputed by the notebook if absent) ---
 pred-3/work/
+
+# --- pred-3-extra embedding and score cache (recomputed by the notebook if absent) ---
+pred-3-extra/work/
